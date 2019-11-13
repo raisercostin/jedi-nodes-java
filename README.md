@@ -34,12 +34,13 @@ class NodesTest {
   @Test
   void testAll() {
     SamplePerson a = new SamplePerson();
-    System.out.println(Nodes.csv.excluding("address").toString(a));
-    System.out.println(Nodes.gson.toString(a));
-    System.out.println(Nodes.json.toString(a));
-    System.out.println(Nodes.prop.toString(a));
-    System.out.println(Nodes.xml.toString(a));
-    System.out.println(Nodes.yml.toString(a));
+    System.out.println("CSV\n"+Nodes.csv.excluding("address").toString(a));
+    System.out.println("CSV with YML\n"+Nodes.csv.toString(a));
+    System.out.println("GSON\n"+Nodes.gson.toString(a));
+    System.out.println("JSON\n"+Nodes.json.toString(a));
+    System.out.println("PROP\n"+Nodes.prop.toString(a));
+    System.out.println("XML\n"+Nodes.xml.toString(a));
+    System.out.println("YML\n"+Nodes.yml.toString(a));
   }
   ...
 }
@@ -47,9 +48,18 @@ class NodesTest {
 
 This will print
 ```
+CSV
 address,age,birthdate,name
 ,18,"1990-01-02T03:04:05.000000006Z",Taleb
 
+CSV with YML
+address,age,birthdate,name
+"---
+country: ""Romania""
+city: ""Bucharest""
+",18,"1990-01-02T03:04:05.000000006Z",Taleb
+
+GSON
 {
   "name": "Taleb",
   "age": 18,
@@ -59,6 +69,7 @@ address,age,birthdate,name
     "city": "Bucharest"
   }
 }
+JSON
 {
   "name" : "Taleb",
   "age" : 18,
@@ -68,12 +79,14 @@ address,age,birthdate,name
     "city" : "Bucharest"
   }
 }
+PROP
 name=Taleb
 age=18
 birthdate=1990-01-02T03:04:05.000000006Z
 address.country=Romania
 address.city=Bucharest
 
+XML
 <SamplePerson>
   <name>Taleb</name>
   <age>18</age>
@@ -84,6 +97,7 @@ address.city=Bucharest
   </address>
 </SamplePerson>
 
+YML
 ---
 name: "Taleb"
 age: 18

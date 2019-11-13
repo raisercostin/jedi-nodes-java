@@ -162,13 +162,13 @@ class NodesTest {
   @Test
   void testAll() {
     SamplePerson a = new SamplePerson();
-    System.out.println(Nodes.csv.excluding("address").toString(a));
-    System.out.println(Nodes.csv.toString(a));
-    System.out.println(Nodes.gson.toString(a));
-    System.out.println(Nodes.json.toString(a));
-    System.out.println(Nodes.prop.toString(a));
-    System.out.println(Nodes.xml.toString(a));
-    System.out.println(Nodes.yml.toString(a));
+    System.out.println("CSV\n"+Nodes.csv.excluding("address").toString(a));
+    System.out.println("CSV with YML\n"+Nodes.csv.toString(a));
+    System.out.println("GSON\n"+Nodes.gson.toString(a));
+    System.out.println("JSON\n"+Nodes.json.toString(a));
+    System.out.println("PROP\n"+Nodes.prop.toString(a));
+    System.out.println("XML\n"+Nodes.xml.toString(a));
+    System.out.println("YML\n"+Nodes.yml.toString(a));
   }
 
   private void testDeserialization(Nodes nodes, Object o) {
