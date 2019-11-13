@@ -1,9 +1,8 @@
 package org.raisercostin.nodes.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+import org.raisercostin.nodes.ExceptionUtils;
 import org.raisercostin.nodes.Nodes;
-import org.raisercostin.util.ExceptionUtils;
 
 public interface JacksonNodes extends Nodes {
   @Override

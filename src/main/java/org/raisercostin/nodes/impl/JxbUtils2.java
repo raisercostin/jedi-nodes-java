@@ -5,8 +5,8 @@ import java.io.StringWriter;
 
 import javax.xml.bind.JAXBContext;
 
+import org.raisercostin.nodes.ExceptionUtils;
 import org.raisercostin.nodes.Nodes;
-import org.raisercostin.util.ExceptionUtils;
 
 public class JxbUtils2 implements Nodes {
   @Override

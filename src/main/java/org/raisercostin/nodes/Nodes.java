@@ -16,8 +16,8 @@ public interface Nodes {
   JxbUtils2 jxb = new JxbUtils2();
   CsvUtils2 csv = new CsvUtils2();
   PropUtils2 prop = new PropUtils2();
-  //TODO to add
-  //hocon
+  // TODO to add
+  // hocon
 
   <T> String toString(T value);
 

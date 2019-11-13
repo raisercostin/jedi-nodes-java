@@ -5,7 +5,6 @@ import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -15,11 +14,9 @@ import com.fasterxml.jackson.core.PrettyPrinter;
 import com.fasterxml.jackson.core.util.DefaultIndenter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.cfg.ConfigFeature;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -88,7 +85,7 @@ public class JacksonUtils {
     return mapper;
   }
 
-  //TODO doesn't work for xml
+  // TODO doesn't work for xml
   private static PrettyPrinter createCustomPrettyPrinter() {
     // Setup a pretty printer with an indenter (indenter has 4 spaces in this case)
     // DefaultPrettyPrinter.Indenter indenter = new DefaultIndenter("", DefaultIndenter.SYS_LF);
@@ -174,8 +171,8 @@ public class JacksonUtils {
         if ("".equals(value)) {
           return 0;
         }
-        //commons-lang3:3.5
-        //return org.apache.commons.lang3.math.NumberUtils.createNumber(value);
+        // commons-lang3:3.5
+        // return org.apache.commons.lang3.math.NumberUtils.createNumber(value);
         return new BigDecimal(value);
       } catch (NumberFormatException e) {
         throw new JsonSyntaxException(e);
