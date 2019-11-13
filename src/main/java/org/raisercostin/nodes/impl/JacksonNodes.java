@@ -1,5 +1,9 @@
 package org.raisercostin.nodes.impl;
 
+import java.io.IOException;
+import java.util.List;
+
+import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.raisercostin.nodes.ExceptionUtils;
 import org.raisercostin.nodes.Nodes;
@@ -13,6 +17,15 @@ public interface JacksonNodes extends Nodes {
   @Override
   default <T> T toObject(String content, Class<T> clazz) {
     return ExceptionUtils.tryWithSuppressed(() -> mapper().readValue(content, clazz), "Cannot deserialize [%s] to [%s].", content, clazz);
+  }
+
+  default <T> MappingIterator<T> toIterator(String content, Class<T> clazz) {
+    return ExceptionUtils.tryWithSuppressed(() -> mapper().readerFor(clazz).readValues(content), "Cannot deserialize [%s] to [%s].",
+        content, clazz);
+  }
+
+  default <T> List<T> toList(String content, Class<T> clazz) {
+    return ExceptionUtils.tryWithSuppressed(() -> toIterator(content, clazz).readAll(), "Cannot deserialize [%s] to [%s].", content, clazz);
   }
 
   /** In case jackson is used and more flexibility is needed. */
@@ -36,9 +49,6 @@ public interface JacksonNodes extends Nodes {
    * (IOException e) { throw new RuntimeException("Cannot deserialize from [" + value + "]: " + e.getMessage(), e); } }
    */
   /*
-   * public static <T> Stream<T> fromJsonAsArray(String value, Class<T> clazz) { try { return (Stream<T>)
-   * Iterator.ofAll(mapper.readerFor(clazz).readValues(value)).toStream(); } catch (IOException e) { throw new
-   * RuntimeException("Cannot deserialize from [" + value + "]: " + e.getMessage(), e); } }
    * 
    * public static <T> T parseWithFailOnUnknwon(String response, Class<T> clazz) { try { return
    * mapperWithFailOnUnknwon.readValue(response, clazz); } catch (IOException e) { throw new

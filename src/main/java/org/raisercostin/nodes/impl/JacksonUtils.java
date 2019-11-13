@@ -54,6 +54,7 @@ public class JacksonUtils {
   private class PropertyFilterMixIn {
   }
 
+  /** See more configuration in ConfigFeature, JsonGenerator.Feature and FormatFeature. */
   public static <T extends ObjectMapper> T configure(T mapper) {
     return configure(mapper, true);
   }
