@@ -30,15 +30,21 @@ class NodesTest {
   }
 
   @Test
-  void testCsvViaJsonNode() {
+  void testEnhancedWithYmlCsv() {
     SamplePerson a = new SamplePerson();
     final Nodes nodes = Nodes.csv;
     System.out.println(nodes.toString(a));
-    assertThat(nodes.toString(a)).isEqualTo("age,birthdate,name,xaddress\n" + 
-        "18,\"1990-01-02T03:04:05.000000006Z\",Taleb,\"---\n" + 
-        "country: \"\"Romania\"\"\n" + 
-        "city: \"\"Bucharest\"\"\n" + 
-        "\"\n");
+    assertThat(nodes.toString(a)).isEqualTo("age,birthdate,name,xaddress\n" + "18,\"1990-01-02T03:04:05.000000006Z\",Taleb,\"---\n"
+        + "country: \"\"Romania\"\"\n" + "city: \"\"Bucharest\"\"\n" + "\"\n");
+  }
+
+  @Test
+  void testEnhancedWithYmlCsvAndBack() {
+    SamplePerson a = new SamplePerson();
+    Nodes nodes = Nodes.csv;
+    String expected = nodes.toString(a);
+    String actual = nodes.toString(nodes.toObject(expected, SamplePerson.class));
+    assertThat(actual).isEqualTo(expected);
   }
 
   @Test
