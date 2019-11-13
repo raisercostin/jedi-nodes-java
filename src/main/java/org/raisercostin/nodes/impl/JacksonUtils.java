@@ -13,9 +13,11 @@ import com.fasterxml.jackson.core.PrettyPrinter;
 import com.fasterxml.jackson.core.util.DefaultIndenter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.cfg.ConfigFeature;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -68,6 +70,12 @@ public class JacksonUtils {
     mapper.configure(SerializationFeature.WRITE_ENUMS_USING_TO_STRING, true);
     mapper.configure(DeserializationFeature.READ_ENUMS_USING_TO_STRING, true);
     mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+    mapper.configure(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS, false);
+    mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+    mapper.configure(SerializationFeature.WRITE_DATES_WITH_ZONE_ID, true);
+    mapper.configure(SerializationFeature.WRAP_EXCEPTIONS, true);
+    //mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
+    //see more in ConfigFeature.class and JsonGenerator.Feature
     mapper.setPropertyNamingStrategy(PropertyNamingStrategy.LOWER_CAMEL_CASE);
     mapper.registerModule(new JavaTimeModule());
     mapper.registerModule(new VavrModule());
