@@ -2,8 +2,10 @@ package org.raisercostin.nodes.impl;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -32,7 +34,6 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 import io.vavr.jackson.datatype.VavrModule;
-import org.apache.commons.lang3.math.NumberUtils;
 
 public class JacksonUtils {
   public static ObjectMapper createObjectMapper() {
@@ -173,7 +174,9 @@ public class JacksonUtils {
         if ("".equals(value)) {
           return 0;
         }
-        return NumberUtils.createNumber(value);
+        //commons-lang3:3.5
+        //return org.apache.commons.lang3.math.NumberUtils.createNumber(value);
+        return new BigDecimal(value);
       } catch (NumberFormatException e) {
         throw new JsonSyntaxException(e);
       }
