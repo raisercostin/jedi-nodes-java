@@ -84,9 +84,12 @@ class NodesTest {
         "    \"country\" : \"Romania\",\n" + 
         "    \"city\" : \"Bucharest\"\n" + 
         "  }\n" + 
-        "}\n"));
+        "}"));
   }
   private String normalize(String content) {
+    return content.replaceAll("\r", "").replaceAll("\n", "\\\\n\n");
+  }
+  private String normalizePreserveLineFeed(String content) {
     return content.replaceAll("\r", "\\\\r").replaceAll("\n", "\\\\n\n");
   }
 

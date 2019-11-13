@@ -74,33 +74,35 @@ public class JacksonUtils {
     mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
     mapper.configure(SerializationFeature.WRITE_DATES_WITH_ZONE_ID, true);
     mapper.configure(SerializationFeature.WRAP_EXCEPTIONS, true);
-    //mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
-    //see more in ConfigFeature.class and JsonGenerator.Feature
+    // mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
+    // see more in ConfigFeature.class and JsonGenerator.Feature
     mapper.setPropertyNamingStrategy(PropertyNamingStrategy.LOWER_CAMEL_CASE);
     mapper.registerModule(new JavaTimeModule());
     mapper.registerModule(new VavrModule());
     // mapper.enable(Feature.IGNORE_UNDEFINED);
     mapper.setSerializationInclusion(Include.NON_NULL);
     configureExclusions(mapper, excludedFields);
+    // mapper.setDefaultPrettyPrinter(createCustomPrettyPrinter());
+    // mapper.setAnnotationIntrospector(new JacksonLombokAnnotationIntrospector());
     return mapper;
   }
 
-  public static <T extends ObjectMapper> void configureExclusions(T mapper, String... excludedFields) {
-    mapper.addMixIn(Object.class, PropertyFilterMixIn.class);
-    // mapper.setDefaultPrettyPrinter(createCustomPrettyPrinter());
-    // mapper.setAnnotationIntrospector(new JacksonLombokAnnotationIntrospector());
-    if (excludedFields != null)
-      mapper.setFilterProvider(
-          new SimpleFilterProvider().addFilter("filter properties by name", SimpleBeanPropertyFilter.serializeAllExcept(excludedFields)));
-  }
-
+  //TODO doesn't work for xml
   private static PrettyPrinter createCustomPrettyPrinter() {
     // Setup a pretty printer with an indenter (indenter has 4 spaces in this case)
-    DefaultPrettyPrinter.Indenter indenter = new DefaultIndenter("", DefaultIndenter.SYS_LF);
+    // DefaultPrettyPrinter.Indenter indenter = new DefaultIndenter("", DefaultIndenter.SYS_LF);
+    DefaultPrettyPrinter.Indenter indenter = new DefaultIndenter("  ", "\n");
     DefaultPrettyPrinter printer = new DefaultPrettyPrinter();
     printer.indentObjectsWith(indenter);
     printer.indentArraysWith(indenter);
     return printer.withoutSpacesInObjectEntries();
+  }
+
+  public static <T extends ObjectMapper> void configureExclusions(T mapper, String... excludedFields) {
+    mapper.addMixIn(Object.class, PropertyFilterMixIn.class);
+    if (excludedFields != null)
+      mapper.setFilterProvider(
+          new SimpleFilterProvider().addFilter("filter properties by name", SimpleBeanPropertyFilter.serializeAllExcept(excludedFields)));
   }
 
   private static class ValidatorAdapterFactory implements TypeAdapterFactory {
