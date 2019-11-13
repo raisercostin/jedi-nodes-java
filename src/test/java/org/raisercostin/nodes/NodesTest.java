@@ -18,7 +18,7 @@ class NodesTest {
     public String name = "Taleb";
     public int age = 18;
     public OffsetDateTime birthdate = OffsetDateTime.of(1990, 1, 2, 3, 4, 5, 6, ZoneOffset.UTC);
-    public SampleAddress address = new SampleAddress();
+    public SampleAddress xaddress = new SampleAddress();
   }
 
   @Test
@@ -27,6 +27,18 @@ class NodesTest {
     final Nodes nodes = Nodes.csv.excluding("address");
     System.out.println(nodes.toString(a));
     assertThat(nodes.toString(a)).isEqualTo("address,age,birthdate,name\n,18,\"1990-01-02T03:04:05.000000006Z\",Taleb\n");
+  }
+
+  @Test
+  void testCsvViaJsonNode() {
+    SamplePerson a = new SamplePerson();
+    final Nodes nodes = Nodes.csv;
+    System.out.println(nodes.toString(a));
+    assertThat(nodes.toString(a)).isEqualTo("age,birthdate,name,xaddress\n" + 
+        "18,\"1990-01-02T03:04:05.000000006Z\",Taleb,\"---\n" + 
+        "country: \"\"Romania\"\"\n" + 
+        "city: \"\"Bucharest\"\"\n" + 
+        "\"\n");
   }
 
   @Test
@@ -94,5 +106,16 @@ class NodesTest {
     assertThat(nodes.toString(a)).isEqualToNormalizingNewlines("<SamplePerson>\n" + "  <name>Taleb</name>\n" + "  <age>18</age>\n"
         + "  <birthdate>1990-01-02T03:04:05.000000006Z</birthdate>\n" + "  <address>\n" + "    <country>Romania</country>\n"
         + "    <city>Bucharest</city>\n" + "  </address>\n" + "</SamplePerson>\n");
+  }
+
+  @Test
+  void testAll() {
+    SamplePerson a = new SamplePerson();
+    System.out.println(Nodes.csv.excluding("address").toString(a));
+    System.out.println(Nodes.gson.toString(a));
+    System.out.println(Nodes.json.toString(a));
+    System.out.println(Nodes.prop.toString(a));
+    System.out.println(Nodes.xml.toString(a));
+    System.out.println(Nodes.yml.toString(a));
   }
 }

@@ -58,6 +58,7 @@ public class JacksonUtils {
     return configure(mapper, true);
   }
 
+  /** See more configuration in ConfigFeature, JsonGenerator.Feature and FormatFeature. */
   public static <T extends ObjectMapper> T configure(T mapper, boolean failOnUnknwon, String... excludedFields) {
     mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, failOnUnknwon);
     mapper.setVisibility(mapper.getSerializationConfig().getDefaultVisibilityChecker().withFieldVisibility(JsonAutoDetect.Visibility.ANY)
@@ -73,7 +74,6 @@ public class JacksonUtils {
     mapper.configure(SerializationFeature.WRITE_DATES_WITH_ZONE_ID, true);
     mapper.configure(SerializationFeature.WRAP_EXCEPTIONS, true);
     // mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
-    // see more in ConfigFeature.class and JsonGenerator.Feature
     mapper.setPropertyNamingStrategy(PropertyNamingStrategy.LOWER_CAMEL_CASE);
     mapper.registerModule(new JavaTimeModule());
     mapper.registerModule(new VavrModule());
