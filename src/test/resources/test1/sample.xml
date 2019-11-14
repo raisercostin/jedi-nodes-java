@@ -1,0 +1,9 @@
+<SamplePerson>
+  <name>Taleb</name>
+  <age>18</age>
+  <birthdate>1990-01-02T03:04:05.000000006Z</birthdate>
+  <address>
+    <country>Romania</country>
+    <city>Bucharest</city>
+  </address>
+</SamplePerson>

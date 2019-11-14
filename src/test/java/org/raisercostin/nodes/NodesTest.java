@@ -4,10 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.raisercostin.utils.Locations;
 
 class NodesTest {
   public static class SampleAddress {
@@ -19,6 +21,8 @@ class NodesTest {
     public String country = "Romania";
     public String city = "Bucharest";
   }
+  public static SamplePerson a = new SamplePerson();
+  public static SamplePerson b = new SamplePerson();
 
   public static class SamplePerson {
     public String name = "Taleb";
@@ -26,22 +30,62 @@ class NodesTest {
     public OffsetDateTime birthdate = OffsetDateTime.of(1990, 1, 2, 3, 4, 5, 6, ZoneOffset.UTC);
     public SampleAddress address = new SampleAddress();
   }
+  @Test
+  void testAll() {
+    SamplePerson a = new SamplePerson();
+    System.out.println("CSV\n"+Nodes.csv.excluding("address").toString(a));
+    System.out.println("CSV with YML\n"+Nodes.csv.toString(a));
+    System.out.println("GSON\n"+Nodes.gson.toString(a));
+    System.out.println("JSON\n"+Nodes.json.toString(a));
+    System.out.println("PROP\n"+Nodes.prop.toString(a));
+    System.out.println("XML\n"+Nodes.xml.toString(a));
+    System.out.println("YML\n"+Nodes.yml.toString(a));
+  }
 
   @Test
-  @Disabled
-  //TODO still doesn't deserialize the yaml inside csv
-  void testCsv() {
+  void testProperties() {
+    testBattery(Nodes.prop, ".properties");
+  }
+  @Test
+  void testYml() {
+    testBattery(Nodes.yml, ".yml");
+  }
+
+  @Test
+  void testXml() {
+    testBattery(Nodes.xml, ".xml");
+  }
+
+  @Test
+  void testJson() {
+    testBattery(Nodes.json, ".json");
+  }
+
+  @Test
+  void testGson() {
+    testBattery(Nodes.gson, "-gson.json");
+  }
+
+  @Test
+  @Disabled // jxb needs @XmlRootElement
+  void testJxb() {
     SamplePerson a = new SamplePerson();
-    final Nodes nodes = Nodes.csv.excluding("address");
+    final Nodes nodes = Nodes.jxb;
     System.out.println(nodes.toString(a));
-    assertThat(nodes.toString(a)).isEqualTo("address,age,birthdate,name\n,18,\"1990-01-02T03:04:05.000000006Z\",Taleb\n");
+    assertThat(nodes.toString(a)).isEqualToNormalizingNewlines("<SamplePerson>\n" + "  <name>Taleb</name>\n" + "  <age>18</age>\n"
+        + "  <birthdate>1990-01-02T03:04:05.000000006Z</birthdate>\n" + "  <address>\n" + "    <country>Romania</country>\n"
+        + "    <city>Bucharest</city>\n" + "  </address>\n" + "</SamplePerson>\n");
     testDeserialization(nodes, a);
   }
 
   @Test
-  void testCsv2() {
-    final Nodes nodes = Nodes.csv;
-    testDeserialization(nodes, new SampleAddress());
+  void testCsv() {
+    testBattery(Nodes.csv.excluding("address"), ".csv", false);
+  }
+
+  @Test
+  void testCsvAdvanced() {
+    testBattery(Nodes.csv, "-advanced.csv", false);
   }
 
   @Test
@@ -92,95 +136,32 @@ class NodesTest {
     testDeserialization(Nodes.csv, new SamplePerson());
   }
 
-  @Test
-  void testProperties() {
-    SamplePerson a = new SamplePerson();
-    final Nodes nodes = Nodes.prop;
-    System.out.println(nodes.toString(a));
-    assertThat(nodes.toString(a)).isEqualTo("name=Taleb\n" + "age=18\n" + "birthdate=1990-01-02T03:04:05.000000006Z\n"
-        + "address.country=Romania\n" + "address.city=Bucharest\n");
-    testDeserialization(nodes, a);
-  }
-
-  @Test
-  void testYaml() {
-    SamplePerson a = new SamplePerson();
-    final Nodes nodes = Nodes.yml;
-    System.out.println(nodes.toString(a));
-    assertThat(nodes.toString(a)).isEqualTo("---\n" + "name: \"Taleb\"\n" + "age: 18\n" + "birthdate: \"1990-01-02T03:04:05.000000006Z\"\n"
-        + "address:\n" + "  country: \"Romania\"\n" + "  city: \"Bucharest\"\n");
-    testDeserialization(nodes, a);
-  }
-
-  @Test
-  void testXml() {
-    SamplePerson a = new SamplePerson();
-    final Nodes nodes = Nodes.xml;
-    System.out.println(nodes.toString(a));
-    assertThat(normalize(nodes.toString(a))).isEqualTo(normalize("<SamplePerson>\n" + "  <name>Taleb</name>\n" + "  <age>18</age>\n"
-        + "  <birthdate>1990-01-02T03:04:05.000000006Z</birthdate>\n" + "  <address>\n" + "    <country>Romania</country>\n"
-        + "    <city>Bucharest</city>\n" + "  </address>\n" + "</SamplePerson>\n"));
-    testDeserialization(nodes, a);
-  }
-
-  @Test
-  void testJson() {
-    SamplePerson a = new SamplePerson();
-    final Nodes nodes = Nodes.json;
-    System.out.println(nodes.toString(a));
-    assertThat(normalize(nodes.toString(a))).isEqualTo(
-        normalize("{\n" + "  \"name\" : \"Taleb\",\n" + "  \"age\" : 18,\n" + "  \"birthdate\" : \"1990-01-02T03:04:05.000000006Z\",\n"
-            + "  \"address\" : {\n" + "    \"country\" : \"Romania\",\n" + "    \"city\" : \"Bucharest\"\n" + "  }\n" + "}"));
-    testDeserialization(nodes, a);
+  private void testDeserialization(Nodes nodes, Object o) {
+    String expected = nodes.toString(o);
+    //System.out.println(expected);
+    String actual = nodes.toString(nodes.toObject(expected, o.getClass()));
+    assertThat(actual).isEqualTo(expected);
   }
 
   private String normalize(String content) {
+    return content.replaceAll("(\r\n)", "\n");
+  }
+
+  private String normalizeAndShow(String content) {
     return content.replaceAll("\r", "").replaceAll("\n", "\\\\n\n");
   }
 
   private String normalizePreserveLineFeed(String content) {
     return content.replaceAll("\r", "\\\\r").replaceAll("\n", "\\\\n\n");
   }
-
-  @Test
-  void testGson() {
-    SamplePerson a = new SamplePerson();
-    final Nodes nodes = Nodes.gson;
+  private void testBattery(final Nodes nodes, final String extension) {
+    testBattery(nodes, extension, true);
+  }
+  private void testBattery(final Nodes nodes, final String extension, boolean testDeserialization) {
     System.out.println(nodes.toString(a));
-    assertThat(nodes.toString(a))
-        .isEqualTo("{\n" + "  \"name\": \"Taleb\",\n" + "  \"age\": 18,\n" + "  \"birthdate\": \"1990-01-02T03:04:05.000000006Z\",\n"
-            + "  \"address\": {\n" + "    \"country\": \"Romania\",\n" + "    \"city\": \"Bucharest\"\n" + "  }\n" + "}");
-    testDeserialization(nodes, a);
-  }
-
-  @Test
-  @Disabled // jxb needs @XmlRootElement
-  void testJxb() {
-    SamplePerson a = new SamplePerson();
-    final Nodes nodes = Nodes.jxb;
-    System.out.println(nodes.toString(a));
-    assertThat(nodes.toString(a)).isEqualToNormalizingNewlines("<SamplePerson>\n" + "  <name>Taleb</name>\n" + "  <age>18</age>\n"
-        + "  <birthdate>1990-01-02T03:04:05.000000006Z</birthdate>\n" + "  <address>\n" + "    <country>Romania</country>\n"
-        + "    <city>Bucharest</city>\n" + "  </address>\n" + "</SamplePerson>\n");
-    testDeserialization(nodes, a);
-  }
-
-  @Test
-  void testAll() {
-    SamplePerson a = new SamplePerson();
-    System.out.println("CSV\n"+Nodes.csv.excluding("address").toString(a));
-    System.out.println("CSV with YML\n"+Nodes.csv.toString(a));
-    System.out.println("GSON\n"+Nodes.gson.toString(a));
-    System.out.println("JSON\n"+Nodes.json.toString(a));
-    System.out.println("PROP\n"+Nodes.prop.toString(a));
-    System.out.println("XML\n"+Nodes.xml.toString(a));
-    System.out.println("YML\n"+Nodes.yml.toString(a));
-  }
-
-  private void testDeserialization(Nodes nodes, Object o) {
-    String expected = nodes.toString(o);
-    //System.out.println(expected);
-    String actual = nodes.toString(nodes.toObject(expected, o.getClass()));
-    assertThat(actual).isEqualTo(expected);
+    assertThat(normalize(nodes.toString(a))).isEqualTo(normalize(Locations.classpath("test1/sample"+extension).readContent()));
+    assertThat(normalize(nodes.toString(Arrays.asList(a,b)))).isEqualTo(normalize(Locations.classpath("test2/sample"+extension).readContent()));
+    if(testDeserialization)
+      testDeserialization(nodes, a);
   }
 }

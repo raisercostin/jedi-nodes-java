@@ -1,6 +1,7 @@
 package org.raisercostin.nodes.impl;
 
 import java.io.IOException;
+import java.io.StringWriter;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
@@ -9,7 +10,6 @@ import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.DeserializationConfig;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,7 +18,6 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationConfig;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.deser.BeanDeserializerModifier;
-import com.fasterxml.jackson.databind.deser.ResolvableDeserializer;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.BeanSerializer;
@@ -40,7 +39,7 @@ public class CsvUtils2 implements JacksonNodes {
     // mapper.configure(Feature.WRAP_AS_ARRAY)
     SimpleModule module = new SimpleModule("CsvAdvanced");
     module.setSerializerModifier(new CsvAdvancedBeanSerializerModifier());
-    //module.setDeserializerModifier(new CsvAdvancedBeanDeserializerModifier());
+    // module.setDeserializerModifier(new CsvAdvancedBeanDeserializerModifier());
     mapper.registerModule(module);
   }
 
@@ -83,8 +82,8 @@ public class CsvUtils2 implements JacksonNodes {
     }
 
     private static class CsvAdvancedDeserializer extends // JsonDeserializer<Object>
-        StdDeserializer<Object> 
-    //implements ResolvableDeserializer 
+        StdDeserializer<Object>
+    // implements ResolvableDeserializer
     {
       private final JsonDeserializer<Object> deserializer;
 
@@ -105,16 +104,16 @@ public class CsvUtils2 implements JacksonNodes {
         // // return Nodes.yml.toObject(p.readValueAs(String.class),deserializer.ctxt.get);
         // // System.out.println("deserializing "+p.readValueAs(String.class)+" to "+ctxt);
         // return p.readValueAs(String.class);
-        System.out.println("deserialize "+p.currentToken()+" : "+p.currentName());
+        System.out.println("deserialize " + p.currentToken() + " : " + p.currentName());
         return deserializer.deserialize(p, ctxt);
       }
 
       // for some reason you have to implement ResolvableDeserializer when modifying BeanDeserializer
       // otherwise deserializing throws JsonMappingException??
-//      @Override
-//      public void resolve(DeserializationContext ctxt) throws JsonMappingException {
-//        ((ResolvableDeserializer) deserializer).resolve(ctxt);
-//      }
+      // @Override
+      // public void resolve(DeserializationContext ctxt) throws JsonMappingException {
+      // ((ResolvableDeserializer) deserializer).resolve(ctxt);
+      // }
 
       //
       // @Override
@@ -141,15 +140,19 @@ public class CsvUtils2 implements JacksonNodes {
     return mapper;
   }
 
+  @SuppressWarnings("unchecked")
   @Override
   public <T> String toString(T value) {
     return ExceptionUtils.tryWithSuppressed(() -> {
-      Object oneValue;
       if (value instanceof Iterable) {
-        oneValue = ((Iterable) value).iterator().next();
-      } else
-        oneValue = value;
-      return objectWriter(oneValue.getClass()).writeValueAsString(value);
+        T oneValue = ((Iterable<T>) value).iterator().next();
+        final StringWriter out = new StringWriter();
+        objectWriter(oneValue.getClass()).writeValues(out).writeAll((Iterable<T>) value).flush();
+        return out.toString();
+      } else {
+        T oneValue = value;
+        return objectWriter(oneValue.getClass()).writeValueAsString(value);
+      }
     }, "");
   }
 

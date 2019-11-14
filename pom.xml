@@ -188,6 +188,12 @@
       <artifactId>jackson-dataformat-properties</artifactId>
       <version>2.10.0.pr1</version>
     </dependency>
+    <dependency>
+      <groupId>org.raisercostin</groupId>
+      <artifactId>jedio</artifactId>
+      <version>0.19</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
   <repositories>
     <repository>

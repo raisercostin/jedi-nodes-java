@@ -1,16 +1,23 @@
 [![Download](https://api.bintray.com/packages/raisercostin/maven/jedi-nodes-java/images/download.svg)](https://bintray.com/raisercostin/maven/jedi-nodes-java/_latestVersion)
 
 # jedi-nodes-java
-Generic node containers serializable/deserializable with jackson and other libraries.
+Utilities to serialize/deserialize to/from data formats: yaml, json, gson, xml, properties, 
+csv, hocon, transposed json, etc
 
-Conversions between
+## Features
+Dataformat to POJO Mappers
 - yaml
-- json
+- json & gson
 - xml
+- xml-jxb (POJO + mandatory jxb annotations)
 - properties
 - csv
+- csv advanced (for hierarchies the encapsulated objects are transformed to yaml - or 
+other format)
+
+## TODO
 - hocon
-- ...
+- transposed json (arrays of arrays, first row of column names - smaller footprint)
 
 # Usage
 
@@ -109,21 +116,27 @@ address:
 ```
 
 ## Maven
+
 Include this pom as parent.
 
 ```xml
-<project>
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>org.raisercostin</groupId>
-    <artifactId>maven-defaults-raisercostin</artifactId>
-    <version>1.0</version>
-  </parent>
-  ...
-</project>
+<dependency>
+  <groupId>org.raisercostin</groupId>
+  <artifactId>jedi-nodes-java</artifactId>
+  <version>0.4-SNAPSHOT</version>
+</dependency>
 ``` 
 
-No need to include a repository as is available at https://jcenter.bintray.com/org/raisercostin/maven-defaults-raisercostin/
+Repository at https://dl.bintray.com/raisercostin/maven/org/raisercostin/jedi-nodes-java
+
+```
+<repository>
+  <id>raisercostin-bintray</id>
+  <url>https://dl.bintray.com/raisercostin/maven</url>
+  <releases><enabled>true</enabled></releases>
+  <snapshots><enabled>false</enabled></snapshots>
+</repository>
+```
 
 # Development
 - To release
