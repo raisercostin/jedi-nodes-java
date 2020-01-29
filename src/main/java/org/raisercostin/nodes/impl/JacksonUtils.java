@@ -83,6 +83,7 @@ public class JacksonUtils {
     configureExclusions(mapper, excludedFields);
     // mapper.setDefaultPrettyPrinter(createCustomPrettyPrinter());
     // mapper.setAnnotationIntrospector(new JacksonLombokAnnotationIntrospector());
+    //configure end of lines platform independent \n for all: xml, json, yml - see https://github.com/FasterXML/jackson-databind/issues/585
     return mapper;
   }
 

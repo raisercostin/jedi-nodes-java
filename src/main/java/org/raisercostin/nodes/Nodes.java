@@ -22,4 +22,9 @@ public interface Nodes {
   <T> String toString(T value);
 
   <T> T toObject(String content, Class<T> clazz);
+
+  @SuppressWarnings("unchecked")
+  default <T> T clone(T value) {
+    return (T)toObject(toString(value),value.getClass());
+  }
 }

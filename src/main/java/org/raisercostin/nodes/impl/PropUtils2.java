@@ -2,6 +2,7 @@ package org.raisercostin.nodes.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.javaprop.JavaPropsMapper;
+import org.raisercostin.nodes.Nodes;
 
 public class PropUtils2 implements JacksonNodes {
   private final JavaPropsMapper mapper;
