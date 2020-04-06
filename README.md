@@ -14,6 +14,12 @@ Dataformat to POJO Mappers
 - csv
 - csv advanced (for hierarchies the encapsulated objects are transformed to yaml - or 
 other format)
+- Use jackson detection & serialization of cycles
+  - http://www.cowtowncoder.com/blog/archives/2012/03/entry_466.html
+  - https://www.baeldung.com/jackson-bidirectional-relationships-and-infinite-recursion
+- retry if cycles are detected
+- max limit of objects reached - https://github.com/abid-khan/depth-wise-json-serializer
+- max limits of depth serialization - https://github.com/abid-khan/depth-wise-json-serializer 
 
 ## TODO
 - hocon

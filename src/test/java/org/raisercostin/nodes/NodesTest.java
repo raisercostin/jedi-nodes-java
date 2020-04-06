@@ -7,6 +7,9 @@ import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.List;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.raisercostin.utils.Locations;
@@ -99,6 +102,14 @@ class NodesTest {
     List<SampleAddress> a = Nodes.csv.toList("city,country\nBucharest,Romania\nBucharest2,Romania2", SampleAddress.class);
     assertThat(a.get(0)).usingRecursiveComparison().isEqualTo(new SampleAddress());
     assertThat(a.get(1)).usingRecursiveComparison().isEqualTo(new SampleAddress("Romania2","Bucharest2"));
+  }
+
+  @Test
+  void testCsvOneLevelObjectAsListWithTwoObjectsGeneric() throws JsonMappingException, JsonProcessingException {
+    JsonNode a = Nodes.csv.mapper().readTree("city,country\nBucharest,Romania\nBucharest2,Romania2");
+    System.out.println(a);
+    assertThat(a.get(0).toString()).isEqualTo("\"city\"");
+    assertThat(a.get(1).toString()).isEqualTo("\"country\"");
   }
 
   @Test
