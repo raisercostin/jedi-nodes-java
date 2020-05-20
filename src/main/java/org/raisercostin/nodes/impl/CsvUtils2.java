@@ -45,7 +45,8 @@ public class CsvUtils2 implements JacksonNodes {
 
   private static class CsvAdvancedBeanSerializerModifier extends BeanSerializerModifier {
     @Override
-    public JsonSerializer<?> modifySerializer(final SerializationConfig serializationConfig, final BeanDescription beanDescription,
+    public JsonSerializer<?> modifySerializer(final SerializationConfig serializationConfig,
+        final BeanDescription beanDescription,
         final JsonSerializer<?> jsonSerializer) {
       return new CsvAdvancedSerializer((JsonSerializer<Object>) jsonSerializer);
     }
@@ -59,13 +60,15 @@ public class CsvUtils2 implements JacksonNodes {
 
       @Override
       public void serialize(final Object o, final JsonGenerator gen, final SerializerProvider ser) throws IOException {
-        if (isRow(gen))
-          if (serializer instanceof BeanSerializer)
+        if (isRow(gen)) {
+          if (serializer instanceof BeanSerializer) {
             gen.writeString(Nodes.yml.toString(o));
-          else
+          } else {
             serializer.serialize(o, gen, ser);
-        else
+          }
+        } else {
           serializer.serialize(o, gen, ser);
+        }
       }
 
       private boolean isRow(JsonGenerator gen) {
@@ -165,7 +168,7 @@ public class CsvUtils2 implements JacksonNodes {
   }
 
   @Override
-  public <T> MappingIterator<T> toIterator(String content, Class<T> clazz) {
+  public <T> MappingIterator<T> toMappingIterator(String content, Class<T> clazz) {
     try {
       return objectReader(clazz).readValues(content);
     } catch (IOException e) {
