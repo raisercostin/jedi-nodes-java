@@ -8,7 +8,10 @@ import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.PrettyPrinter;
 import com.fasterxml.jackson.core.util.DefaultIndenter;
@@ -17,6 +20,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -62,9 +66,13 @@ public class JacksonUtils {
   /** See more configuration in ConfigFeature, JsonGenerator.Feature and FormatFeature. */
   public static <T extends ObjectMapper> T configure(T mapper, boolean failOnUnknwon, String... excludedFields) {
     mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, failOnUnknwon);
-    mapper.setVisibility(mapper.getSerializationConfig().getDefaultVisibilityChecker().withFieldVisibility(JsonAutoDetect.Visibility.ANY)
-        .withCreatorVisibility(JsonAutoDetect.Visibility.ANY).withGetterVisibility(JsonAutoDetect.Visibility.NONE)
-        .withSetterVisibility(JsonAutoDetect.Visibility.NONE).withIsGetterVisibility(JsonAutoDetect.Visibility.NONE));
+    mapper.setVisibility(mapper.getSerializationConfig()
+      .getDefaultVisibilityChecker()
+      .withFieldVisibility(JsonAutoDetect.Visibility.ANY)
+      .withCreatorVisibility(JsonAutoDetect.Visibility.ANY)
+      .withGetterVisibility(JsonAutoDetect.Visibility.NONE)
+      .withSetterVisibility(JsonAutoDetect.Visibility.NONE)
+      .withIsGetterVisibility(JsonAutoDetect.Visibility.NONE));
     mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
     mapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
     mapper.configure(SerializationFeature.WRITE_ENUMS_USING_TO_STRING, true);
@@ -78,6 +86,7 @@ public class JacksonUtils {
     mapper.setPropertyNamingStrategy(PropertyNamingStrategy.LOWER_CAMEL_CASE);
     mapper.registerModule(new JavaTimeModule());
     mapper.registerModule(new VavrModule());
+    mapper.registerModule(new ThrowablesModule());
     // mapper.enable(Feature.IGNORE_UNDEFINED);
     mapper.setSerializationInclusion(Include.NON_NULL);
     configureExclusions(mapper, excludedFields);
@@ -85,6 +94,26 @@ public class JacksonUtils {
     // mapper.setAnnotationIntrospector(new JacksonLombokAnnotationIntrospector());
     //configure end of lines platform independent \n for all: xml, json, yml - see https://github.com/FasterXML/jackson-databind/issues/585
     return mapper;
+  }
+
+  /** This can be used to serialize exceptions but most probably not to deserialize them back.*/
+  public static class ThrowablesModule extends SimpleModule {
+    private static final long serialVersionUID = -2687534903247863765L;
+
+    @JsonIgnoreProperties({ "$id" })
+    public abstract class ThrowableMixIn {
+      @JsonIdentityInfo(generator = ObjectIdGenerators.StringIdGenerator.class, property = "$id")
+      private Throwable cause;
+    }
+
+    public ThrowablesModule() {
+      super("throwables");
+    }
+
+    @Override
+    public void setupModule(SetupContext context) {
+      context.setMixInAnnotations(Throwable.class, ThrowableMixIn.class);
+    }
   }
 
   // TODO doesn't work for xml
@@ -100,9 +129,11 @@ public class JacksonUtils {
 
   public static <T extends ObjectMapper> void configureExclusions(T mapper, String... excludedFields) {
     mapper.addMixIn(Object.class, PropertyFilterMixIn.class);
-    if (excludedFields != null)
+    if (excludedFields != null) {
       mapper.setFilterProvider(
-          new SimpleFilterProvider().addFilter("filter properties by name", SimpleBeanPropertyFilter.serializeAllExcept(excludedFields)));
+        new SimpleFilterProvider().addFilter("filter properties by name",
+          SimpleBeanPropertyFilter.serializeAllExcept(excludedFields)));
+    }
   }
 
   private static class ValidatorAdapterFactory implements TypeAdapterFactory {
@@ -124,20 +155,21 @@ public class JacksonUtils {
           Map boundFields = (Map) f.get(delegate);
 
           // Then replace it with our implementation throwing exception if the value is null.
-          boundFields = new LinkedHashMap(boundFields) {
+          boundFields = new LinkedHashMap(boundFields)
+            {
 
-            @Override
-            public Object get(Object key) {
+              @Override
+              public Object get(Object key) {
 
-              Object value = super.get(key);
-              if (value == null) {
-                throw new JsonParseException("invalid property name: " + key);
+                Object value = super.get(key);
+                if (value == null) {
+                  throw new JsonParseException("invalid property name: " + key);
+                }
+                return value;
+
               }
-              return value;
 
-            }
-
-          };
+            };
           // Finally, push our custom map back using reflection.
           f.set(delegate, boundFields);
 
