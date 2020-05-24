@@ -3,6 +3,7 @@ package org.raisercostin.nodes.impl;
 import java.io.IOException;
 import java.io.StringWriter;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -24,6 +25,10 @@ import com.fasterxml.jackson.databind.ser.BeanSerializer;
 import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema.Column;
+import io.vavr.collection.Iterator;
+import io.vavr.collection.List;
+import io.vavr.collection.Map;
 import org.raisercostin.nodes.ExceptionUtils;
 import org.raisercostin.nodes.Nodes;
 
@@ -146,15 +151,16 @@ public class CsvUtils2 implements JacksonNodes {
   @SuppressWarnings("unchecked")
   @Override
   public <T> String toString(T value) {
+    mapper.setSerializationInclusion(Include.NON_NULL);
     return ExceptionUtils.tryWithSuppressed(() -> {
       if (value instanceof Iterable) {
         T oneValue = ((Iterable<T>) value).iterator().next();
         final StringWriter out = new StringWriter();
-        objectWriter(oneValue.getClass()).writeValues(out).writeAll((Iterable<T>) value).flush();
+        objectWriter(oneValue).writeValues(out).writeAll((Iterable<T>) value).flush();
         return out.toString();
       } else {
         T oneValue = value;
-        return objectWriter(oneValue.getClass()).writeValueAsString(value);
+        return objectWriter(oneValue).writeValueAsString(value);
       }
     }, "");
   }
@@ -176,9 +182,28 @@ public class CsvUtils2 implements JacksonNodes {
     }
   }
 
-  private ObjectWriter objectWriter(Class<?> clazz) {
+  private ObjectWriter objectWriter(Object element) {
+    Class<?> clazz = element.getClass();
+    if (Map.class.isInstance(element)) {
+      //each element is a map
+      CsvSchema schema = csvSchemaFromKeys(((Map<Object, Object>) element).keySet().toList());
+      return mapper.writer(schema);
+    } else if (java.util.Map.class.isInstance(element)) {
+      //each element is a map
+      CsvSchema schema = csvSchemaFromKeys(
+        Iterator.ofAll(((java.util.Map<Object, Object>) element).keySet()).toList());
+      return mapper.writer(schema);
+    }
     CsvSchema schema = csvSchema(clazz);
     return mapper.writer(schema);
+  }
+
+  private CsvSchema csvSchemaFromKeys(List<Object> keySet) {
+    CsvSchema.Builder builder = CsvSchema.builder();
+    builder.addColumns(keySet.sorted().zipWithIndex().map(c -> new Column(c._2, c._1.toString())));
+    CsvSchema schema = builder.build().withHeader().withComments();
+      //.withNullValue("-");
+    return schema;
   }
 
   private ObjectReader objectReader(Class<?> clazz) {
@@ -188,6 +213,7 @@ public class CsvUtils2 implements JacksonNodes {
 
   private CsvSchema csvSchema(Class<?> clazz) {
     CsvSchema schema = mapper.schemaFor(clazz).withHeader().withComments();
+      //.withNullValue("-");
     return schema;
   }
 
