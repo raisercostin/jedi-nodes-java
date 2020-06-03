@@ -1,5 +1,6 @@
 package org.raisercostin.nodes;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.raisercostin.nodes.impl.CsvUtils2;
 import org.raisercostin.nodes.impl.GsonUtils2;
 import org.raisercostin.nodes.impl.JsonUtils2;
@@ -23,8 +24,12 @@ public interface Nodes {
 
   <T> T toObject(String content, Class<T> clazz);
 
+  default <T> T toObject(String content, TypeReference<T> typeRef) {
+    throw new RuntimeException("Not implemented yet!!!");
+  }
+
   @SuppressWarnings("unchecked")
   default <T> T clone(T value) {
-    return (T)toObject(toString(value),value.getClass());
+    return (T) toObject(toString(value), value.getClass());
   }
 }

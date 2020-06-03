@@ -2,6 +2,7 @@ package org.raisercostin.nodes.impl;
 
 import java.util.List;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.vavr.collection.Iterator;
@@ -15,10 +16,22 @@ public interface JacksonNodes extends Nodes {
     return ExceptionUtils.tryWithSuppressed(() -> mapper().writeValueAsString(value), "Cannot serialize [%s]: ", value);
   }
 
+  /**To map to a generic type List, Map use TypeReference:
+   * <pre>
+       TypeReference<Map<String, DataSpec>> typeRef = new TypeReference<Map<String, DataSpec>>(){};
+       Map<String, DataSpec> map1 = toObject(content,typeRef);
+     </pre>
+   */
   @Override
   default <T> T toObject(String content, Class<T> clazz) {
     return ExceptionUtils.tryWithSuppressed(() -> mapper().readValue(content, clazz),
       "Cannot deserialize [%s] to [%s].", content, clazz);
+  }
+
+  @Override
+  default <T> T toObject(String content, TypeReference<T> typeRef) {
+    return ExceptionUtils.tryWithSuppressed(() -> mapper().readValue(content, typeRef),
+      "Cannot deserialize [%s] to [%s].", content, typeRef);
   }
 
   default <T> MappingIterator<T> toMappingIterator(String content, Class<T> clazz) {
