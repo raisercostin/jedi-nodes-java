@@ -13,7 +13,6 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.MappingIterator;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationConfig;
@@ -32,7 +31,7 @@ import io.vavr.collection.Map;
 import org.raisercostin.nodes.ExceptionUtils;
 import org.raisercostin.nodes.Nodes;
 
-public class CsvUtils2 implements JacksonNodes {
+public class CsvUtils2 implements JacksonNodes, JacksonNodesLike<CsvUtils2, CsvMapper> {
   private final CsvMapper mapper;
 
   public CsvUtils2() {
@@ -201,24 +200,27 @@ public class CsvUtils2 implements JacksonNodes {
   private CsvSchema csvSchemaFromKeys(List<Object> keySet) {
     CsvSchema.Builder builder = CsvSchema.builder();
     builder.addColumns(keySet.sorted().zipWithIndex().map(c -> new Column(c._2, c._1.toString())));
-    CsvSchema schema = builder.build().withHeader().withComments();
-      //.withNullValue("-");
+    CsvSchema schema = builder.build().withHeader().withComments().withColumnReordering(true);
+    //.withNullValue("-");
     return schema;
   }
 
   private ObjectReader objectReader(Class<?> clazz) {
+    //    CsvSchema schema = CsvSchema.emptySchema() //
+    //        .withHeader();
+    //      with(schema).
     CsvSchema schema = csvSchema(clazz);
     return mapper.reader(schema).forType(clazz);
   }
 
   private CsvSchema csvSchema(Class<?> clazz) {
-    CsvSchema schema = mapper.schemaFor(clazz).withHeader().withComments();
-      //.withNullValue("-");
+    CsvSchema schema = mapper.schemaFor(clazz).withHeader().withComments().withColumnReordering(true);
+    //.withNullValue("-");
     return schema;
   }
 
   @Override
-  public CsvUtils2 newNodes(ObjectMapper mapper) {
-    return new CsvUtils2((CsvMapper) mapper);
+  public CsvUtils2 newNodes(CsvMapper mapper) {
+    return new CsvUtils2(mapper);
   }
 }

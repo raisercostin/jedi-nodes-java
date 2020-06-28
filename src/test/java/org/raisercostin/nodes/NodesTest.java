@@ -12,18 +12,22 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.raisercostin.utils.Locations;
+import org.raisercostin.jedio.Locations;
 
 class NodesTest {
   public static class SampleAddress {
-    public SampleAddress() {}
-    public SampleAddress(String country, String city) {
-      this.country=country;
-      this.city=city;
+    public SampleAddress() {
     }
+
+    public SampleAddress(String country, String city) {
+      this.country = country;
+      this.city = city;
+    }
+
     public String country = "Romania";
     public String city = "Bucharest";
   }
+
   public static SamplePerson a = new SamplePerson();
   public static SamplePerson b = new SamplePerson();
 
@@ -33,22 +37,24 @@ class NodesTest {
     public OffsetDateTime birthdate = OffsetDateTime.of(1990, 1, 2, 3, 4, 5, 6, ZoneOffset.UTC);
     public SampleAddress address = new SampleAddress();
   }
+
   @Test
   void testAll() {
     SamplePerson a = new SamplePerson();
-    System.out.println("CSV\n"+Nodes.csv.excluding("address").toString(a));
-    System.out.println("CSV with YML\n"+Nodes.csv.toString(a));
-    System.out.println("GSON\n"+Nodes.gson.toString(a));
-    System.out.println("JSON\n"+Nodes.json.toString(a));
-    System.out.println("PROP\n"+Nodes.prop.toString(a));
-    System.out.println("XML\n"+Nodes.xml.toString(a));
-    System.out.println("YML\n"+Nodes.yml.toString(a));
+    System.out.println("CSV\n" + Nodes.csv.excluding("address").toString(a));
+    System.out.println("CSV with YML\n" + Nodes.csv.toString(a));
+    System.out.println("GSON\n" + Nodes.gson.toString(a));
+    System.out.println("JSON\n" + Nodes.json.toString(a));
+    System.out.println("PROP\n" + Nodes.prop.toString(a));
+    System.out.println("XML\n" + Nodes.xml.toString(a));
+    System.out.println("YML\n" + Nodes.yml.toString(a));
   }
 
   @Test
   void testProperties() {
     testBattery(Nodes.prop, ".properties");
   }
+
   @Test
   void testYml() {
     testBattery(Nodes.yml, ".yml");
@@ -75,9 +81,11 @@ class NodesTest {
     SamplePerson a = new SamplePerson();
     final Nodes nodes = Nodes.jxb;
     System.out.println(nodes.toString(a));
-    assertThat(nodes.toString(a)).isEqualToNormalizingNewlines("<SamplePerson>\n" + "  <name>Taleb</name>\n" + "  <age>18</age>\n"
-        + "  <birthdate>1990-01-02T03:04:05.000000006Z</birthdate>\n" + "  <address>\n" + "    <country>Romania</country>\n"
-        + "    <city>Bucharest</city>\n" + "  </address>\n" + "</SamplePerson>\n");
+    assertThat(nodes.toString(a))
+      .isEqualToNormalizingNewlines("<SamplePerson>\n" + "  <name>Taleb</name>\n" + "  <age>18</age>\n"
+          + "  <birthdate>1990-01-02T03:04:05.000000006Z</birthdate>\n" + "  <address>\n"
+          + "    <country>Romania</country>\n"
+          + "    <city>Bucharest</city>\n" + "  </address>\n" + "</SamplePerson>\n");
     testDeserialization(nodes, a);
   }
 
@@ -98,10 +106,17 @@ class NodesTest {
   }
 
   @Test
-  void testCsvOneLevelObjectAsListWithTwoObjects() {
-    List<SampleAddress> a = Nodes.csv.toList("city,country\nBucharest,Romania\nBucharest2,Romania2", SampleAddress.class);
+  void testCsvOneLevelObjectAsListSwappedColumns() {
+    List<SampleAddress> a = Nodes.csv.toList("country,city\nRomania,Bucharest", SampleAddress.class);
     assertThat(a.get(0)).usingRecursiveComparison().isEqualTo(new SampleAddress());
-    assertThat(a.get(1)).usingRecursiveComparison().isEqualTo(new SampleAddress("Romania2","Bucharest2"));
+  }
+
+  @Test
+  void testCsvOneLevelObjectAsListWithTwoObjects() {
+    List<SampleAddress> a = Nodes.csv.toList("city,country\nBucharest,Romania\nBucharest2,Romania2",
+      SampleAddress.class);
+    assertThat(a.get(0)).usingRecursiveComparison().isEqualTo(new SampleAddress());
+    assertThat(a.get(1)).usingRecursiveComparison().isEqualTo(new SampleAddress("Romania2", "Bucharest2"));
   }
 
   @Test
@@ -132,10 +147,10 @@ class NodesTest {
     SamplePerson a = new SamplePerson();
     final Nodes nodes = Nodes.csv;
     System.out.println(nodes.toString(a));
-    assertThat(nodes.toString(a)).isEqualTo("address,age,birthdate,name\n" + 
-        "\"---\n" + 
-        "country: \"\"Romania\"\"\n" + 
-        "city: \"\"Bucharest\"\"\n" + 
+    assertThat(nodes.toString(a)).isEqualTo("address,age,birthdate,name\n" +
+        "\"---\n" +
+        "country: \"\"Romania\"\"\n" +
+        "city: \"\"Bucharest\"\"\n" +
         "\",18,\"1990-01-02T03:04:05.000000006Z\",Taleb\n");
     testDeserialization(nodes, a);
   }
@@ -165,14 +180,19 @@ class NodesTest {
   private String normalizePreserveLineFeed(String content) {
     return content.replaceAll("\r", "\\\\r").replaceAll("\n", "\\\\n\n");
   }
+
   private void testBattery(final Nodes nodes, final String extension) {
     testBattery(nodes, extension, true);
   }
+
   private void testBattery(final Nodes nodes, final String extension, boolean testDeserialization) {
     System.out.println(nodes.toString(a));
-    assertThat(normalize(nodes.toString(a))).isEqualTo(normalize(Locations.classpath("test1/sample"+extension).readContent()));
-    assertThat(normalize(nodes.toString(Arrays.asList(a,b)))).isEqualTo(normalize(Locations.classpath("test2/sample"+extension).readContent()));
-    if(testDeserialization)
+    assertThat(normalize(nodes.toString(a)))
+      .isEqualTo(normalize(Locations.classpath("test1/sample" + extension).readContent()));
+    assertThat(normalize(nodes.toString(Arrays.asList(a, b))))
+      .isEqualTo(normalize(Locations.classpath("test2/sample" + extension).readContent()));
+    if (testDeserialization) {
       testDeserialization(nodes, a);
+    }
   }
 }

@@ -1,9 +1,8 @@
 package org.raisercostin.nodes.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 
-public class YmlUtils2 implements JacksonNodes {
+public class YmlUtils2 implements JacksonNodes, JacksonNodesLike<YmlUtils2, YAMLMapper> {
   private final YAMLMapper mapper;
 
   public YmlUtils2() {
@@ -20,9 +19,8 @@ public class YmlUtils2 implements JacksonNodes {
     return mapper;
   }
 
-  @SuppressWarnings("unchecked")
   @Override
-  public YmlUtils2 newNodes(ObjectMapper configure) {
-    return new YmlUtils2((YAMLMapper) configure);
+  public YmlUtils2 newNodes(YAMLMapper configure) {
+    return new YmlUtils2(configure);
   }
 }

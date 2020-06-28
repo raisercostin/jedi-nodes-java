@@ -121,6 +121,7 @@
     <dependency>
       <groupId>org.raisercostin</groupId>
       <artifactId>jedio</artifactId>
+      <version>0.39</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

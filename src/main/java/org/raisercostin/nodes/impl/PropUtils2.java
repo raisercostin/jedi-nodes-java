@@ -1,10 +1,8 @@
 package org.raisercostin.nodes.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.javaprop.JavaPropsMapper;
-import org.raisercostin.nodes.Nodes;
 
-public class PropUtils2 implements JacksonNodes {
+public class PropUtils2 implements JacksonNodes, JacksonNodesLike<PropUtils2, JavaPropsMapper> {
   private final JavaPropsMapper mapper;
 
   public PropUtils2() {
@@ -21,9 +19,8 @@ public class PropUtils2 implements JacksonNodes {
     return mapper;
   }
 
-  @SuppressWarnings("unchecked")
   @Override
-  public PropUtils2 newNodes(ObjectMapper mapper) {
-    return new PropUtils2((JavaPropsMapper) mapper);
+  public PropUtils2 newNodes(JavaPropsMapper mapper) {
+    return new PropUtils2(mapper);
   }
 }

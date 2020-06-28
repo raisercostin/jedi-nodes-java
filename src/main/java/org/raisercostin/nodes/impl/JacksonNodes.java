@@ -52,17 +52,6 @@ public interface JacksonNodes extends Nodes {
   /** In case jackson is used and more flexibility is needed. */
   <T extends ObjectMapper> T mapper();
 
-  default <T extends Nodes> T excluding(String... excludedFields) {
-    final ObjectMapper mapper = mapper().copy();
-    JacksonUtils.configureExclusions(mapper, excludedFields);
-    return newNodes(mapper);
-  }
-
-  default <T extends Nodes> T parseWithFailOnUnknwon() {
-    return newNodes(JacksonUtils.configure(mapper().copy(), true));
-  }
-
-  <T extends JacksonNodes> T newNodes(ObjectMapper configure);
   // public static final ObjectMapper mapper = JacksonUtils.createObjectMapper();
   // public static final ObjectMapper mapperWithFailOnUnknwon = JacksonUtils.createObjectMapper(true);
   /*

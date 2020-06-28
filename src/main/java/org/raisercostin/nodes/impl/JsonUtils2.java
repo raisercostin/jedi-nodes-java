@@ -1,9 +1,8 @@
 package org.raisercostin.nodes.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 
-public class JsonUtils2 implements JacksonNodes {
+public class JsonUtils2 implements JacksonNodes, JacksonNodesLike<JsonUtils2, JsonMapper> {
   public final JsonMapper mapper;
 
   public JsonUtils2() {
@@ -14,14 +13,14 @@ public class JsonUtils2 implements JacksonNodes {
     this.mapper = mapper;
   }
 
+  @SuppressWarnings("unchecked")
   @Override
   public JsonMapper mapper() {
     return mapper;
   }
 
-  @SuppressWarnings("unchecked")
   @Override
-  public JsonUtils2 newNodes(ObjectMapper mapper) {
-    return new JsonUtils2((JsonMapper) mapper);
+  public JsonUtils2 newNodes(JsonMapper mapper) {
+    return new JsonUtils2(mapper);
   }
 }
