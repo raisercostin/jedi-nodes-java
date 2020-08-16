@@ -39,4 +39,11 @@ public interface JacksonNodesLike<SELF extends JacksonNodes, MAPPER extends Obje
   default SELF withIgnoreUnknwon() {
     return withMapper(mapper -> (MAPPER) mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES));
   }
+
+  default SELF withRootName(String rootName) {
+    return withMapper(mapper -> {
+      mapper.setConfig(mapper.getDeserializationConfig().withRootName(rootName));
+      return mapper;
+    });
+  }
 }

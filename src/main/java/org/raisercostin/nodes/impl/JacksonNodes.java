@@ -1,6 +1,7 @@
 package org.raisercostin.nodes.impl;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.MappingIterator;
@@ -11,6 +12,8 @@ import org.raisercostin.nodes.ExceptionUtils;
 import org.raisercostin.nodes.Nodes;
 
 public interface JacksonNodes extends Nodes {
+  org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(JacksonNodes.class);
+
   @Override
   default <T> String toString(T value) {
     return ExceptionUtils.tryWithSuppressed(() -> mapper().writeValueAsString(value), "Cannot serialize [%s]: ", value);
@@ -24,8 +27,18 @@ public interface JacksonNodes extends Nodes {
    */
   @Override
   default <T> T toObject(String content, Class<T> clazz) {
-    return ExceptionUtils.tryWithSuppressed(() -> mapper().readValue(content, clazz),
-      "Cannot deserialize [%s] to [%s].", content, clazz);
+    ObjectMapper mapper = mapper();
+    if (this instanceof PropUtils2 && mapper.getDeserializationConfig().getFullRootName() != null) {
+      String prefix = mapper.getDeserializationConfig().getFullRootName().getSimpleName();
+      //if some properties doesn't have to rootName they will not be ignored
+      //com.fasterxml.jackson.databind.exc.MismatchedInputException: Root name 'field1' does not match expected ('prefix1') for type [simple type, class org.raisercostin.nodes.ReadingWithRootNameTest$Dummy1]
+      String newContent = content.replaceAll("(?m)^(?!" + Pattern.quote(prefix) + ").*$", "");
+      log.debug("Removing lines that doesn't start with [{}] from [{}] and getting [{}]", prefix, content, newContent);
+      content = newContent;
+    }
+    String content2 = content;
+    return ExceptionUtils.tryWithSuppressed(() -> mapper().readValue(content2, clazz),
+      "Cannot deserialize [%s] to [%s].", content2, clazz);
   }
 
   @Override
