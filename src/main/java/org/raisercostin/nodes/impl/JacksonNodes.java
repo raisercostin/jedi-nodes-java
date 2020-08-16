@@ -1,11 +1,12 @@
 package org.raisercostin.nodes.impl;
 
 import java.util.List;
-import java.util.regex.Pattern;
 
+import com.fasterxml.jackson.core.FormatSchema;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
 import io.vavr.collection.Iterator;
 import io.vavr.collection.Map;
 import org.raisercostin.nodes.ExceptionUtils;
@@ -28,17 +29,33 @@ public interface JacksonNodes extends Nodes {
   @Override
   default <T> T toObject(String content, Class<T> clazz) {
     ObjectMapper mapper = mapper();
-    if (this instanceof PropUtils2 && mapper.getDeserializationConfig().getFullRootName() != null) {
-      String prefix = mapper.getDeserializationConfig().getFullRootName().getSimpleName();
-      //if some properties doesn't have to rootName they will not be ignored
-      //com.fasterxml.jackson.databind.exc.MismatchedInputException: Root name 'field1' does not match expected ('prefix1') for type [simple type, class org.raisercostin.nodes.ReadingWithRootNameTest$Dummy1]
-      String newContent = content.replaceAll("(?m)^(?!" + Pattern.quote(prefix) + ").*$", "");
-      log.debug("Removing lines that doesn't start with [{}] from [{}] and getting [{}]", prefix, content, newContent);
-      content = newContent;
-    }
+    //    if (this instanceof PropUtils2 && mapper.getDeserializationConfig().getFullRootName() != null) {
+    //      String prefix = mapper.getDeserializationConfig().getFullRootName().getSimpleName();
+    //      //if some properties doesn't have to rootName they will not be ignored
+    //      //com.fasterxml.jackson.databind.exc.MismatchedInputException: Root name 'field1' does not match expected ('prefix1') for type [simple type, class org.raisercostin.nodes.ReadingWithRootNameTest$Dummy1]
+    //      String newContent = content.replaceAll("(?m)^(?!" + Pattern.quote(prefix) + ").*$", "");
+    //      log.debug("Removing lines that doesn't start with [{}] from [{}] and getting [{}]", prefix, content, newContent);
+    //      content = newContent.trim();
+    //      //add a dummy value in case is empty. anyway should be ignored
+    //      if (content.isEmpty()) {
+    //        content = prefix + ".dummy=1";
+    //      }
+    //    }
     String content2 = content;
-    return ExceptionUtils.tryWithSuppressed(() -> mapper().readValue(content2, clazz),
-      "Cannot deserialize [%s] to [%s].", content2, clazz);
+    return ExceptionUtils.tryWithSuppressed(() -> {
+      FormatSchema schema = schema();
+      //System.out.println("schema1:" + schema);
+      if (schema == null) {
+        return mapper().readValue(content2, clazz);
+      } else {
+        ObjectReader reader = mapper().readerFor(clazz);
+        return reader.with(schema).readValue(content2);
+      }
+    }, "Cannot deserialize [%s] to [%s].", content2, clazz);
+  }
+
+  default FormatSchema schema() {
+    return null;
   }
 
   @Override

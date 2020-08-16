@@ -1,10 +1,12 @@
 package org.raisercostin.nodes.impl;
 
+import com.fasterxml.jackson.core.FormatSchema;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy.PropertyNamingStrategyBase;
 import io.vavr.Function1;
 
-public interface JacksonNodesLike<SELF extends JacksonNodes, MAPPER extends ObjectMapper> {
+public interface JacksonNodesLike<SELF extends JacksonNodes, MAPPER extends ObjectMapper, SCHEMA extends FormatSchema> {
   /** In case jackson is used and more flexibility is needed. */
   MAPPER mapper();
 
@@ -40,10 +42,25 @@ public interface JacksonNodesLike<SELF extends JacksonNodes, MAPPER extends Obje
     return withMapper(mapper -> (MAPPER) mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES));
   }
 
-  default SELF withRootName(String rootName) {
-    return withMapper(mapper -> {
-      mapper.setConfig(mapper.getDeserializationConfig().withRootName(rootName));
-      return mapper;
-    });
+  default SELF withPrefix(String rootName) {
+    throw new RuntimeException("Not implemented yet!!!");
+  }
+
+  @SuppressWarnings("unchecked")
+  default SELF withSchema(SCHEMA formatSchema) {
+    return (SELF) this;
+  }
+}
+
+class PrefixStrategy extends PropertyNamingStrategyBase {
+  private String prefix;
+
+  public PrefixStrategy(String prefix) {
+    this.prefix = prefix;
+  }
+
+  @Override
+  public String translate(String input) {
+    return prefix + input;
   }
 }

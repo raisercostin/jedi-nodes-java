@@ -1,8 +1,9 @@
 package org.raisercostin.nodes.impl;
 
+import com.fasterxml.jackson.core.FormatSchema;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 
-public class JsonUtils2 implements JacksonNodes, JacksonNodesLike<JsonUtils2, JsonMapper> {
+public class JsonUtils2 implements JacksonNodes, JacksonNodesLike<JsonUtils2, JsonMapper, FormatSchema> {
   public final JsonMapper mapper;
 
   public JsonUtils2() {

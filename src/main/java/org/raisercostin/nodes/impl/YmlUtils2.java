@@ -1,8 +1,9 @@
 package org.raisercostin.nodes.impl;
 
+import com.fasterxml.jackson.core.FormatSchema;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 
-public class YmlUtils2 implements JacksonNodes, JacksonNodesLike<YmlUtils2, YAMLMapper> {
+public class YmlUtils2 implements JacksonNodes, JacksonNodesLike<YmlUtils2, YAMLMapper, FormatSchema> {
   private final YAMLMapper mapper;
 
   public YmlUtils2() {

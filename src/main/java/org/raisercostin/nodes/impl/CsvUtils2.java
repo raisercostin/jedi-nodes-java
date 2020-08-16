@@ -31,7 +31,9 @@ import io.vavr.collection.Map;
 import org.raisercostin.nodes.ExceptionUtils;
 import org.raisercostin.nodes.Nodes;
 
-public class CsvUtils2 implements JacksonNodes, JacksonNodesLike<CsvUtils2, CsvMapper> {
+public class CsvUtils2 implements JacksonNodes, JacksonNodesLike<CsvUtils2, CsvMapper, CsvSchema> {
+  private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(CsvUtils2.class);
+
   private final CsvMapper mapper;
 
   public CsvUtils2() {
@@ -111,7 +113,7 @@ public class CsvUtils2 implements JacksonNodes, JacksonNodesLike<CsvUtils2, CsvM
         // // return Nodes.yml.toObject(p.readValueAs(String.class),deserializer.ctxt.get);
         // // System.out.println("deserializing "+p.readValueAs(String.class)+" to "+ctxt);
         // return p.readValueAs(String.class);
-        System.out.println("deserialize " + p.currentToken() + " : " + p.currentName());
+        log.debug("deserialize {} : {}", p.currentToken(), p.currentName());
         return deserializer.deserialize(p, ctxt);
       }
 
