@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.raisercostin</groupId>
     <artifactId>maven-defaults-raisercostin</artifactId>
-    <version>1.14</version>
+    <version>1.15</version>
   </parent>
   <artifactId>jedi-nodes-java</artifactId>
   <version>0.14-SNAPSHOT</version>
@@ -70,6 +70,11 @@
       <artifactId>jackson-databind</artifactId>
     </dependency>
     <!-- utilities -->
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>26.0-jre</version>
+    </dependency>
     <dependency>
       <groupId>com.typesafe</groupId>
       <artifactId>config</artifactId>
