@@ -1,4 +1,4 @@
-package org.raisercostin.nodes;
+package org.raisercostin.nodes.impl;
 
 //Copied from apache-commons ExceptionUtils
 public class ExceptionUtils {

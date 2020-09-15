@@ -2,15 +2,16 @@ package org.raisercostin.nodes.impl;
 
 import com.fasterxml.jackson.core.FormatSchema;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import org.raisercostin.nodes.JacksonNodes;
 
-public class XmlUtils2 implements JacksonNodes, JacksonNodesLike<XmlUtils2, XmlMapper, FormatSchema> {
+public class XmlJacksonNodes implements JacksonNodes, JacksonNodesLike<XmlJacksonNodes, XmlMapper, FormatSchema> {
   private final XmlMapper mapper;
 
-  public XmlUtils2() {
+  public XmlJacksonNodes() {
     this(JacksonUtils.configure(new XmlMapper()));
   }
 
-  public XmlUtils2(XmlMapper mapper) {
+  public XmlJacksonNodes(XmlMapper mapper) {
     this.mapper = mapper;
   }
   // mapper.configure(JsonGenerator.Feature.IGNORE_UNKNOWN, false);
@@ -36,7 +37,7 @@ public class XmlUtils2 implements JacksonNodes, JacksonNodesLike<XmlUtils2, XmlM
   }
 
   @Override
-  public XmlUtils2 newNodes(XmlMapper configure) {
-    return new XmlUtils2(configure);
+  public XmlJacksonNodes newNodes(XmlMapper configure) {
+    return new XmlJacksonNodes(configure);
   }
 }

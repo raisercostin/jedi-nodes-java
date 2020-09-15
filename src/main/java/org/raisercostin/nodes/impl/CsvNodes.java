@@ -28,19 +28,19 @@ import com.fasterxml.jackson.dataformat.csv.CsvSchema.Column;
 import io.vavr.collection.Iterator;
 import io.vavr.collection.List;
 import io.vavr.collection.Map;
-import org.raisercostin.nodes.ExceptionUtils;
+import org.raisercostin.nodes.JacksonNodes;
 import org.raisercostin.nodes.Nodes;
 
-public class CsvUtils2 implements JacksonNodes, JacksonNodesLike<CsvUtils2, CsvMapper, CsvSchema> {
-  private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(CsvUtils2.class);
+public class CsvNodes implements JacksonNodes, JacksonNodesLike<CsvNodes, CsvMapper, CsvSchema> {
+  private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(CsvNodes.class);
 
   private final CsvMapper mapper;
 
-  public CsvUtils2() {
+  public CsvNodes() {
     this(JacksonUtils.configure(new CsvMapper()));
   }
 
-  public CsvUtils2(CsvMapper mapper) {
+  public CsvNodes(CsvMapper mapper) {
     this.mapper = mapper;
     // mapper.configure(Feature.WRAP_AS_ARRAY)
     SimpleModule module = new SimpleModule("CsvAdvanced");
@@ -222,7 +222,7 @@ public class CsvUtils2 implements JacksonNodes, JacksonNodesLike<CsvUtils2, CsvM
   }
 
   @Override
-  public CsvUtils2 newNodes(CsvMapper mapper) {
-    return new CsvUtils2(mapper);
+  public CsvNodes newNodes(CsvMapper mapper) {
+    return new CsvNodes(mapper);
   }
 }

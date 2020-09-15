@@ -3,18 +3,20 @@ package org.raisercostin.nodes.impl;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.time.Duration;
+import java.util.concurrent.ExecutionException;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
 
 import com.google.common.base.Preconditions;
-import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
-import org.raisercostin.nodes.ExceptionUtils;
+import com.google.common.cache.LoadingCache;
 import org.raisercostin.nodes.Nodes;
 
-public class JxbUtils2 implements Nodes {
-  private static final Cache<Class<?>, JAXBContext> contexts = CacheBuilder.newBuilder()
+/**Pure Jxb handler.*/
+public class XmlJxbNodes implements Nodes {
+  private static final LoadingCache<Class<?>, JAXBContext> contexts = CacheBuilder.newBuilder()
     .expireAfterAccess(Duration.ofHours(10))
     .build(new CacheLoader<Class<?>, JAXBContext>()
       {
@@ -29,8 +31,17 @@ public class JxbUtils2 implements Nodes {
     return ExceptionUtils.tryWithSuppressed(() -> {
       StringWriter sw = new StringWriter();
       JAXBContext jaxbContext = findContext(value.getClass());
-      jaxbContext.createMarshaller().marshal(value, sw);
-      return sw.toString();
+      Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+      // format the XML output
+      jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+      // if want to marshal values without `@XmlRootElement` https://codenotfound.com/jaxb-marshal-element-missing-xmlrootelement-annotation.html
+      //QName qName = new QName("com.yourModel.t", "object");
+      //JAXBElement<T> root = new JAXBElement<>(qName, (Class<T>) value.getClass(), value);
+      Object root = value;
+      StringWriter stringWriter = new StringWriter();
+      jaxbMarshaller.marshal(root, stringWriter);
+      String result = stringWriter.toString();
+      return result;
     }, "");
   }
 
@@ -45,11 +56,16 @@ public class JxbUtils2 implements Nodes {
   }
 
   /**
+   * @throws ExecutionException
    * @threadsafe Search for a context for this class.
    */
   private static <T> JAXBContext findContext(Class<T> clazz) {
-    JAXBContext context = contexts.getIfPresent(clazz);
-    Preconditions.checkNotNull(context, "Context for [" + clazz + "] should always be createed by cache.");
-    return context;
+    try {
+      JAXBContext context = contexts.get(clazz);
+      Preconditions.checkNotNull(context, "Context for [" + clazz + "] should always be created by cache.");
+      return context;
+    } catch (ExecutionException e) {
+      throw ExceptionUtils.nowrap(e);
+    }
   }
 }

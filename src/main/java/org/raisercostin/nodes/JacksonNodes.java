@@ -1,4 +1,4 @@
-package org.raisercostin.nodes.impl;
+package org.raisercostin.nodes;
 
 import java.util.List;
 
@@ -9,8 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import io.vavr.collection.Iterator;
 import io.vavr.collection.Map;
-import org.raisercostin.nodes.ExceptionUtils;
-import org.raisercostin.nodes.Nodes;
+import org.raisercostin.nodes.impl.ExceptionUtils;
 
 public interface JacksonNodes extends Nodes {
   org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(JacksonNodes.class);

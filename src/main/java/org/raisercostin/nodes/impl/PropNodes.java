@@ -2,16 +2,17 @@ package org.raisercostin.nodes.impl;
 
 import com.fasterxml.jackson.dataformat.javaprop.JavaPropsMapper;
 import com.fasterxml.jackson.dataformat.javaprop.JavaPropsSchema;
+import org.raisercostin.nodes.JacksonNodes;
 
-public class PropUtils2 implements JacksonNodes, JacksonNodesLike<PropUtils2, JavaPropsMapper, JavaPropsSchema> {
+public class PropNodes implements JacksonNodes, JacksonNodesLike<PropNodes, JavaPropsMapper, JavaPropsSchema> {
   private final JavaPropsMapper mapper;
   private JavaPropsSchema defaultSchema = null;
 
-  public PropUtils2() {
+  public PropNodes() {
     this(JacksonUtils.configure(new JavaPropsMapper()));
   }
 
-  public PropUtils2(JavaPropsMapper mapper) {
+  public PropNodes(JavaPropsMapper mapper) {
     this.mapper = mapper;
   }
 
@@ -22,8 +23,8 @@ public class PropUtils2 implements JacksonNodes, JacksonNodesLike<PropUtils2, Ja
   }
 
   @Override
-  public PropUtils2 newNodes(JavaPropsMapper mapper) {
-    return new PropUtils2(mapper);
+  public PropNodes newNodes(JavaPropsMapper mapper) {
+    return new PropNodes(mapper);
   }
 
   @Override
@@ -32,13 +33,13 @@ public class PropUtils2 implements JacksonNodes, JacksonNodesLike<PropUtils2, Ja
   }
 
   @Override
-  public PropUtils2 withSchema(JavaPropsSchema formatSchema) {
+  public PropNodes withSchema(JavaPropsSchema formatSchema) {
     this.defaultSchema = formatSchema;
     return this;
   }
 
   @Override
-  public PropUtils2 withPrefix(String rootName) {
+  public PropNodes withPrefix(String rootName) {
     return withSchema(JavaPropsSchema.emptySchema()
       .withPrefix(rootName)
     //.withoutPathSeparator()

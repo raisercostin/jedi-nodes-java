@@ -17,6 +17,7 @@ import com.fasterxml.jackson.core.PrettyPrinter;
 import com.fasterxml.jackson.core.util.DefaultIndenter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -82,6 +83,19 @@ public class JacksonUtils {
     mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
     mapper.configure(SerializationFeature.WRITE_DATES_WITH_ZONE_ID, true);
     mapper.configure(SerializationFeature.WRAP_EXCEPTIONS, true);
+
+    //Will not work if the key is not comparable
+    mapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, false);
+    // needed for jackson serialized exception cause `Direct self-reference leading to cycle` for (through reference
+    // chain: java.lang.IllegalArgumentException["cause"]->java.lang.IllegalArgumentException["cause"] )
+    mapper.configure(SerializationFeature.FAIL_ON_SELF_REFERENCES, true);
+    // mapper.mapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, false);
+    // mapper.configure(DeserializationFeature.READ_ENUMS_USING_TO_STRING, true);
+    // mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
+    mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true);
+    mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
+    mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_VALUES, true);
+
     // mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
     mapper.setPropertyNamingStrategy(PropertyNamingStrategy.LOWER_CAMEL_CASE);
     mapper.registerModule(new JavaTimeModule());

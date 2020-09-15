@@ -15,7 +15,7 @@ import com.google.gson.stream.JsonWriter;
 import io.vavr.control.Option;
 import org.raisercostin.nodes.Nodes;
 
-public class GsonUtils2 implements Nodes {
+public class GsonNodes implements Nodes {
   public static Gson gson = new GsonBuilder().setPrettyPrinting().addSerializationExclusionStrategy(new ExclusionStrategy() {
     @Override
     public boolean shouldSkipField(FieldAttributes f) {
