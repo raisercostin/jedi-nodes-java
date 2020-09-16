@@ -93,7 +93,8 @@ public class JacksonUtils {
     // mapper.configure(DeserializationFeature.READ_ENUMS_USING_TO_STRING, true);
     // mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
     mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true);
-    mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
+    // A bug in jackson 2.10.0 prevents deserializing the catalog with this option active. Better to be switched on when is necessary
+    mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, false);
     mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_VALUES, true);
 
     // mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
