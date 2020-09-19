@@ -11,7 +11,7 @@ public interface JacksonNodesLike<SELF extends JacksonNodes, MAPPER extends Obje
   /** In case jackson is used and more flexibility is needed. */
   MAPPER mapper();
 
-  SELF newNodes(MAPPER configure);
+  SELF create(MAPPER configure);
 
   /** In case jackson is used and more flexibility is needed. */
   //<T extends ObjectMapper> T mapper();
@@ -20,17 +20,17 @@ public interface JacksonNodesLike<SELF extends JacksonNodes, MAPPER extends Obje
     @SuppressWarnings("unchecked")
     final MAPPER mapper = (MAPPER) mapper().copy();
     JacksonUtils.configureExclusions(mapper, excludedFields);
-    return newNodes(mapper);
+    return create(mapper);
   }
 
   @SuppressWarnings("unchecked")
   default SELF parseWithFailOnUnknwon() {
-    return newNodes((MAPPER) JacksonUtils.configure(mapper().copy(), true));
+    return create((MAPPER) JacksonUtils.configure(mapper().copy(), true));
   }
 
   default SELF withMapper(Function1<MAPPER, MAPPER> mapperChanger) {
     final MAPPER mapper = mapperChanger.apply(mapper());
-    return newNodes(mapper);
+    return create(mapper);
   }
 
   @SuppressWarnings("unchecked")

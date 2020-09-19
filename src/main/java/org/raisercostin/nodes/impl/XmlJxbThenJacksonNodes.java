@@ -119,7 +119,13 @@ public class XmlJxbThenJacksonNodes
   }
 
   @Override
-  public XmlJxbThenJacksonNodes newNodes(XmlMapper configure) {
+  public XmlJxbThenJacksonNodes create(XmlMapper configure) {
     return new XmlJxbThenJacksonNodes(configure);
+  }
+
+  @SuppressWarnings("unchecked")
+  @Override
+  public XmlJxbThenJacksonNodes createJacksonNodes(ObjectMapper mapper) {
+    return create((XmlMapper) mapper);
   }
 }

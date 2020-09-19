@@ -7,6 +7,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
+import io.vavr.Function1;
 import io.vavr.collection.Iterator;
 import io.vavr.collection.Map;
 import org.raisercostin.nodes.impl.ExceptionUtils;
@@ -106,4 +107,12 @@ public interface JacksonNodes extends Nodes {
   default Map<String, Object> toMapFromString(String jsonString) {
     return Nodes.json.toObject(jsonString, Map.class);
   }
+
+  @SuppressWarnings("unchecked")
+  default <T extends JacksonNodes> T withObjectMapper(Function1<ObjectMapper, ObjectMapper> mapperChanger) {
+    final ObjectMapper mapper = mapperChanger.apply(mapper());
+    return createJacksonNodes(mapper);
+  }
+
+  <T extends JacksonNodes> T createJacksonNodes(ObjectMapper configure);
 }

@@ -1,6 +1,7 @@
 package org.raisercostin.nodes.impl;
 
 import com.fasterxml.jackson.core.FormatSchema;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.raisercostin.nodes.JacksonNodes;
 
@@ -37,7 +38,13 @@ public class XmlJacksonNodes implements JacksonNodes, JacksonNodesLike<XmlJackso
   }
 
   @Override
-  public XmlJacksonNodes newNodes(XmlMapper configure) {
+  public XmlJacksonNodes create(XmlMapper configure) {
     return new XmlJacksonNodes(configure);
+  }
+
+  @SuppressWarnings("unchecked")
+  @Override
+  public XmlJacksonNodes createJacksonNodes(ObjectMapper mapper) {
+    return create((XmlMapper) mapper);
   }
 }

@@ -1,5 +1,6 @@
 package org.raisercostin.nodes.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.javaprop.JavaPropsMapper;
 import com.fasterxml.jackson.dataformat.javaprop.JavaPropsSchema;
 import org.raisercostin.nodes.JacksonNodes;
@@ -23,8 +24,14 @@ public class PropNodes implements JacksonNodes, JacksonNodesLike<PropNodes, Java
   }
 
   @Override
-  public PropNodes newNodes(JavaPropsMapper mapper) {
+  public PropNodes create(JavaPropsMapper mapper) {
     return new PropNodes(mapper);
+  }
+
+  @SuppressWarnings("unchecked")
+  @Override
+  public PropNodes createJacksonNodes(ObjectMapper mapper) {
+    return create((JavaPropsMapper) mapper);
   }
 
   @Override

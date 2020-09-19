@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.MappingIterator;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationConfig;
@@ -222,7 +223,13 @@ public class CsvNodes implements JacksonNodes, JacksonNodesLike<CsvNodes, CsvMap
   }
 
   @Override
-  public CsvNodes newNodes(CsvMapper mapper) {
+  public CsvNodes create(CsvMapper mapper) {
     return new CsvNodes(mapper);
+  }
+
+  @SuppressWarnings("unchecked")
+  @Override
+  public CsvNodes createJacksonNodes(ObjectMapper mapper) {
+    return create((CsvMapper) mapper);
   }
 }
