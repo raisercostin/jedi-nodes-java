@@ -139,7 +139,7 @@
     <dependency>
       <groupId>org.raisercostin</groupId>
       <artifactId>jedio</artifactId>
-      <version>0.39</version>
+      <version>0.44</version>
       <scope>test</scope>
     </dependency>
     <dependency>
