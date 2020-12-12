@@ -24,7 +24,11 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
@@ -102,9 +106,20 @@ public class JacksonUtils {
     mapper.registerModule(new JavaTimeModule());
     mapper.registerModule(new VavrModule());
     mapper.registerModule(new ThrowablesModule());
+    mapper.registerModule(new Jdk8Module());
+    mapper.registerModule(new ThrowablesModule());
+    //TODO configured by default
+    //mapper.registerModule(new JsonComponentModule());
+    //mapper.registerModule(new JacksonXmlModule());
+    //mapper.registerModule(new JaxbAnnotationModule());
+
     // mapper.enable(Feature.IGNORE_UNDEFINED);
     mapper.setSerializationInclusion(Include.NON_NULL);
     configureExclusions(mapper, excludedFields);
+    if (mapper instanceof XmlMapper) {
+      ((XmlMapper) mapper).setDefaultUseWrapper(false);
+    }
+
     // mapper.setDefaultPrettyPrinter(createCustomPrettyPrinter());
     // mapper.setAnnotationIntrospector(new JacksonLombokAnnotationIntrospector());
     //configure end of lines platform independent \n for all: xml, json, yml - see https://github.com/FasterXML/jackson-databind/issues/585

@@ -4,12 +4,17 @@ import java.util.List;
 
 import com.fasterxml.jackson.core.FormatSchema;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
+import com.fasterxml.jackson.module.jsonSchema.factories.SchemaFactoryWrapper;
+import com.google.common.base.Strings;
 import io.vavr.Function1;
 import io.vavr.collection.Iterator;
 import io.vavr.collection.Map;
+import org.apache.commons.lang3.StringUtils;
 import org.raisercostin.nodes.impl.ExceptionUtils;
 
 public interface JacksonNodes extends Nodes {
@@ -28,7 +33,11 @@ public interface JacksonNodes extends Nodes {
    */
   @Override
   default <T> T toObject(String content, Class<T> clazz) {
-    ObjectMapper mapper = mapper();
+    return toObject(content, 1000, clazz);
+  }
+
+  default <T> T toObject(String content, int maxSize, Class<T> clazz) {
+    //ObjectMapper mapper = mapper();
     //    if (this instanceof PropUtils2 && mapper.getDeserializationConfig().getFullRootName() != null) {
     //      String prefix = mapper.getDeserializationConfig().getFullRootName().getSimpleName();
     //      //if some properties doesn't have to rootName they will not be ignored
@@ -51,11 +60,22 @@ public interface JacksonNodes extends Nodes {
         ObjectReader reader = mapper().readerFor(clazz);
         return reader.with(schema).readValue(content2);
       }
-    }, "Cannot deserialize [%s] to [%s].", content2, clazz);
+    }, "Cannot deserialize [%s] to [%s].", StringUtils.abbreviate(content2, maxSize), clazz);
   }
 
   default FormatSchema schema() {
     return null;
+  }
+
+  default JsonSchema jsonSchema(Class<?> clazz) {
+    try {
+      SchemaFactoryWrapper visitor = new SchemaFactoryWrapper();
+      mapper().acceptJsonFormatVisitor(clazz, visitor);
+      JsonSchema jsonSchema = visitor.finalSchema();
+      return jsonSchema;
+    } catch (JsonMappingException e) {
+      throw ExceptionUtils.wrap(e);
+    }
   }
 
   @Override

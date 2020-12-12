@@ -24,6 +24,12 @@ other format)
 ## TODO
 - hocon
 - transposed json (arrays of arrays, first row of column names - smaller footprint)
+- [ ] add json schema generation
+- [ ] add json schema validation
+  - https://www.baeldung.com/introduction-to-json-schema-in-java
+  - see https://json-schema.org/implementations.html
+  - https://github.com/leadpony/justify
+  - https://github.com/java-json-tools/json-schema-validator
 
 # Usage
 
