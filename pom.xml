@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+>
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.raisercostin</groupId>
@@ -44,7 +48,7 @@
     <dist.release.url>${dist.url}/releases/</dist.release.url>
     <dist.snapshot.url>${dist.url}/snapshots/</dist.snapshot.url>
     <dist.site.url>${dist.url}/sites/${project.groupId}-${project.artifactId}-${project.version}</dist.site.url>
-    <spring.version>5.2.10.RELEASE</spring.version>
+    <springboot.version>2.3.5.RELEASE</springboot.version>
   </properties>
   <licenses>
     <license>
@@ -60,6 +64,19 @@
       <organizationUrl>http://raisercostin.org</organizationUrl>
     </developer>
   </developers>
+  <dependencyManagement>
+    <dependencies>
+      <!-- https://stackoverflow.com/questions/16894032/how-to-use-poms-as-a-dependency-in-maven -->
+      <!-- Spring Boot BOM -->
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>${springboot.version}</version>
+        <scope>import</scope>
+        <type>pom</type>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
   <dependencies>
     <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
     <dependency>
