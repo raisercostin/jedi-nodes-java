@@ -5,6 +5,7 @@ import java.util.List;
 import com.fasterxml.jackson.core.FormatSchema;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
@@ -60,7 +61,14 @@ public interface JacksonNodes extends Nodes {
         ObjectReader reader = mapper().readerFor(clazz);
         return reader.with(schema).readValue(content2);
       }
-    }, "Cannot deserialize [%s] to [%s].", StringUtils.abbreviate(content2, maxSize), clazz);
+    }, "Cannot deserialize [%s] to [%s].", StringUtils.abbreviateMiddle(content2, "[...]", maxSize), clazz);
+  }
+
+  default String prettyPrint(String content) {
+    return ExceptionUtils.tryWithSuppressed(() -> {
+      JsonNode value = mapper().readTree(content);
+      return mapper().writeValueAsString(value);
+    }, "Cannot prettyPrint [%s]: ", StringUtils.abbreviateMiddle(content, "[...]", 2000));
   }
 
   default FormatSchema schema() {

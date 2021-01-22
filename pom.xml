@@ -44,6 +44,7 @@
     <dist.release.url>${dist.url}/releases/</dist.release.url>
     <dist.snapshot.url>${dist.url}/snapshots/</dist.snapshot.url>
     <dist.site.url>${dist.url}/sites/${project.groupId}-${project.artifactId}-${project.version}</dist.site.url>
+    <spring.version>5.2.10.RELEASE</spring.version>
   </properties>
   <licenses>
     <license>
@@ -135,7 +136,7 @@
     <dependency>
       <groupId>org.raisercostin</groupId>
       <artifactId>jedio</artifactId>
-      <version>0.44</version>
+      <version>0.53</version>
       <scope>test</scope>
     </dependency>
     <dependency>
