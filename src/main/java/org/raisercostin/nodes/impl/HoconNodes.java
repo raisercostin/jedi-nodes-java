@@ -109,7 +109,7 @@ public class HoconNodes implements Nodes {
     //        .render(
     //          ConfigRenderOptions.defaults().setOriginComments(true).setComments(true).setFormatted(true).setJson(false));
     //      System.out.println(newConfig);
-    Map<String, Object> allProperties2 = Iterator.ofAll(config.entrySet())
+    Map<String, Object> allProperties2 = Iterator.ofAll(config.resolve().entrySet())
       .toSortedMap(x -> x.getKey(), x -> x.getValue().unwrapped());
     String allProperties = Nodes.prop.toString(allProperties2);
     //

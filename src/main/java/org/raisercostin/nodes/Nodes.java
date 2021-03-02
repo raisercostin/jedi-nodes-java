@@ -21,7 +21,7 @@ public interface Nodes {
   CsvNodes csv = new CsvNodes();
   PropNodes prop = new PropNodes();
   HoconNodes hocon = new HoconNodes();
-  HoconNodes hoconWithSystem = new HoconNodes();
+  HoconNodes hoconWithSystem = new HoconNodes().withUseSystemEnvironment(true).withUseSystemProperties(true);
   @Deprecated
   XmlJxbNodes jxb = xmlJxb;
 
