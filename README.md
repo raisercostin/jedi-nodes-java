@@ -19,7 +19,8 @@ other format)
   - https://www.baeldung.com/jackson-bidirectional-relationships-and-infinite-recursion
 - retry if cycles are detected
 - max limit of objects reached - https://github.com/abid-khan/depth-wise-json-serializer
-- max limits of depth serialization - https://github.com/abid-khan/depth-wise-json-serializer 
+- max limits of depth serialization - https://github.com/abid-khan/depth-wise-json-serializer
+- http://commons.apache.org/proper/commons-configuration/userguide/quick_start.html 
 
 ## TODO
 - hocon

@@ -49,6 +49,7 @@
     <dist.snapshot.url>${dist.url}/snapshots/</dist.snapshot.url>
     <dist.site.url>${dist.url}/sites/${project.groupId}-${project.artifactId}-${project.version}</dist.site.url>
     <springboot.version>2.3.5.RELEASE</springboot.version>
+    <checkerframework.version>2.10.0</checkerframework.version>
   </properties>
   <licenses>
     <license>
@@ -78,6 +79,21 @@
     </dependencies>
   </dependencyManagement>
   <dependencies>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>${lombok.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.checkerframework</groupId>
+      <artifactId>jdk8</artifactId>
+      <version>${checkerframework.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.github.spotbugs</groupId>
+      <artifactId>spotbugs-annotations</artifactId>
+    </dependency>
     <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
     <dependency>
       <groupId>com.google.code.gson</groupId>

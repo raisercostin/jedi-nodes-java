@@ -10,9 +10,15 @@ import java.util.List;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.typesafe.config.ConfigSyntax;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Value;
+import lombok.With;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.raisercostin.jedio.Locations;
+import org.raisercostin.nodes.impl.HoconNodes;
 
 class NodesTest {
   public static class SampleAddress {
@@ -73,6 +79,11 @@ class NodesTest {
   @Test
   void testGson() {
     testBattery(Nodes.gson, "-gson.json");
+  }
+
+  @Test
+  void testHocon() {
+    testBattery(Nodes.hocon, ".conf");
   }
 
   @Test
@@ -194,5 +205,26 @@ class NodesTest {
     if (testDeserialization) {
       testDeserialization(nodes, a);
     }
+  }
+
+  @Value
+  @lombok.NoArgsConstructor(force = true)
+  @lombok.AllArgsConstructor(access = AccessLevel.PRIVATE)
+  @lombok.With
+  @lombok.Builder(access = AccessLevel.PRIVATE)
+  //@lombok.experimental.FieldDefaults(makeFinal = true, level = AccessLevel.PUBLIC)
+  //@lombok.Getter(value = AccessLevel.NONE)
+  //@lombok.Setter(value = AccessLevel.NONE)
+  public static class Point {
+    @Builder.Default
+    private final int x = 3;
+    private final int y;
+  }
+
+  @Test
+  void testWithers() {
+    assertThat(new Point().withY(2).toString()).isEqualTo("NodesTest.Point(x=3, y=2)");
+    assertThat(new Point().withX(5).withY(2).toString()).isEqualTo("NodesTest.Point(x=5, y=2)");
+    assertThat(new Point().withX(5).toString()).isEqualTo("NodesTest.Point(x=5, y=0)");
   }
 }

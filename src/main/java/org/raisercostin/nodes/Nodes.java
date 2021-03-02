@@ -3,6 +3,7 @@ package org.raisercostin.nodes;
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.raisercostin.nodes.impl.CsvNodes;
 import org.raisercostin.nodes.impl.GsonNodes;
+import org.raisercostin.nodes.impl.HoconNodes;
 import org.raisercostin.nodes.impl.JsonNodes;
 import org.raisercostin.nodes.impl.PropNodes;
 import org.raisercostin.nodes.impl.XmlJacksonNodes;
@@ -19,8 +20,8 @@ public interface Nodes {
   XmlJxbThenJacksonNodes xmlJxbThenJackson = new XmlJxbThenJacksonNodes();
   CsvNodes csv = new CsvNodes();
   PropNodes prop = new PropNodes();
-  // TODO to add
-  // hocon
+  HoconNodes hocon = new HoconNodes();
+  HoconNodes hoconWithSystem = new HoconNodes();
   @Deprecated
   XmlJxbNodes jxb = xmlJxb;
 
