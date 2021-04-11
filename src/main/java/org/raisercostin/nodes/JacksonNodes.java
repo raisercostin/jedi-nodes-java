@@ -128,12 +128,12 @@ public interface JacksonNodes extends Nodes {
 
   @SuppressWarnings("unchecked")
   default Map<String, Object> toMapFromObject(Object payload) {
-    return toMapFromString(Nodes.json.toString(payload));
+    return toMapFromString(toString(payload));
   }
 
   @SuppressWarnings("unchecked")
   default Map<String, Object> toMapFromString(String jsonString) {
-    return Nodes.json.toObject(jsonString, Map.class);
+    return toObject(jsonString, Map.class);
   }
 
   @SuppressWarnings("unchecked")

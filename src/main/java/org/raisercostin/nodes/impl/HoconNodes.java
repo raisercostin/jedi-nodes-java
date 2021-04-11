@@ -32,6 +32,7 @@ import org.raisercostin.nodes.Nodes;
 @lombok.Getter(value = AccessLevel.NONE)
 @lombok.Setter(value = AccessLevel.NONE)
 public class HoconNodes implements Nodes {
+  private static PropNodes properties = Nodes.prop.withCopyMapper();
   @Builder.Default
   public boolean useSystemEnvironment = false;
   @Builder.Default
@@ -45,7 +46,7 @@ public class HoconNodes implements Nodes {
 
   @Override
   public <T> String toString(T value) {
-    Config config = value instanceof Config ? (Config) value : toConfigFromProperties(Nodes.prop.toString(value));
+    Config config = value instanceof Config ? (Config) value : toConfigFromProperties(properties.toString(value));
     String newConfig = config.root()
       .render(
         ConfigRenderOptions.defaults().setOriginComments(true).setComments(true).setFormatted(true).setJson(false));
@@ -71,7 +72,7 @@ public class HoconNodes implements Nodes {
       return (T) config;
     } else {
       content = hoconToProperties(config);
-      return Nodes.prop.toObject(content, clazz);
+      return properties.toObject(content, clazz);
     }
   }
 
@@ -97,10 +98,12 @@ public class HoconNodes implements Nodes {
   }
 
   public HoconNodes withIgnoreUnknwon() {
+    properties = properties.withIgnoreUnknwon();
     return this;
   }
 
   public HoconNodes withPrefix(String prefix) {
+    properties = properties.withPrefix(prefix);
     return this;
   }
 
@@ -111,9 +114,9 @@ public class HoconNodes implements Nodes {
     //      System.out.println(newConfig);
     Map<String, Object> allProperties2 = Iterator.ofAll(config.resolve().entrySet())
       .toSortedMap(x -> x.getKey(), x -> x.getValue().unwrapped());
-    String allProperties = Nodes.prop.toString(allProperties2);
+    String allProperties = properties.toString(allProperties2);
     //
-    //    log.info("a2:" + Nodes.prop.toString(allProperties2));
+    //    log.info("a2:" + properties.toString(allProperties2));
     //    log.info("a1:" + allProperties2.mkString("\n"));
     //    String allProperties = Iterator.ofAll(config.entrySet())
     //      .toList()
