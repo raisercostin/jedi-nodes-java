@@ -1,6 +1,8 @@
 package org.raisercostin.nodes.impl;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.LinkedHashMap;
@@ -9,26 +11,32 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.PrettyPrinter;
 import com.fasterxml.jackson.core.util.DefaultIndenter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
-import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
@@ -130,19 +138,53 @@ public class JacksonUtils {
   public static class ThrowablesModule extends SimpleModule {
     private static final long serialVersionUID = -2687534903247863765L;
 
-    @JsonIgnoreProperties({ "$id" })
-    public abstract class ThrowableMixIn {
-      @JsonIdentityInfo(generator = ObjectIdGenerators.StringIdGenerator.class, property = "$id")
+    //@JsonIgnoreProperties({ "$id" })
+    @JsonDeserialize(using = ThrowableMixIn.ThrowableDeserializer.class)
+    @JsonSerialize(using = ThrowableMixIn.ThrowableSerializer.class)
+    public static abstract class ThrowableMixIn {
+      @JsonIdentityInfo(generator = ObjectIdGenerators.StringIdGenerator.class, property = "$id2")
       private Throwable cause;
-    }
 
-    public ThrowablesModule() {
-      super("throwables");
+      static class ThrowableDeserializer extends JsonDeserializer<Throwable> {
+        @Override
+        public Throwable deserialize(JsonParser p, DeserializationContext ctxt)
+            throws IOException, JsonProcessingException {
+          if (p == null) {
+            return null;
+          }
+          return new Throwable(p.readValueAs(String.class));
+        }
+      }
+
+      static class ThrowableSerializer extends JsonSerializer<Throwable> {
+        @Override
+        public void serialize(Throwable value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+          serializers.findValueSerializer(String.class).serialize(toSerializableString(value), gen, serializers);
+        }
+
+        private String toSerializableString(Throwable throwable) {
+          final StringWriter sw = new StringWriter();
+          final PrintWriter pw = new PrintWriter(sw, true);
+          throwable.printStackTrace(pw);
+          return sw.getBuffer().toString();
+        }
+      }
+
+      //
+      //    public abstract class StackTraceElementMixin {
+      //      @JsonProperty("className")
+      //      private String declaringClass;
+      //    }
+      //
+      //    public ThrowablesModule() {
+      //      super("throwables");
+      //    }
     }
 
     @Override
     public void setupModule(SetupContext context) {
       context.setMixInAnnotations(Throwable.class, ThrowableMixIn.class);
+      //context.setMixInAnnotations(StackTraceElement.class, StackTraceElementMixin.class);
     }
   }
 

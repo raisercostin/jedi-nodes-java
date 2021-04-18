@@ -169,6 +169,12 @@
       <artifactId>jedio</artifactId>
       <version>0.64</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.raisercostin</groupId>
+          <artifactId>jedi-nodes-java</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
