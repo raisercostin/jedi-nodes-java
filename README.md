@@ -140,13 +140,12 @@ Include this pom as parent.
 </dependency>
 ``` 
 
-Repository at https://dl.bintray.com/raisercostin/maven/org/raisercostin/jedi-nodes-java
+Repository at https://raw.githubusercontent.com/raisercostin/maven-repo/master/org/raisercostin/jedi-nodes-java
 
 ```
 <repository>
-  <id>raisercostin-bintray</id>
-  <url>https://dl.bintray.com/raisercostin/maven</url>
-  <releases><enabled>true</enabled></releases>
+  <id>raisercostin-github</id>
+  <url>https://raw.githubusercontent.com/raisercostin/maven-repo/master/</url>
   <snapshots><enabled>false</enabled></snapshots>
 </repository>
 ```
