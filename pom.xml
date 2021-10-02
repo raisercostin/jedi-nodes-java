@@ -7,7 +7,7 @@
     <version>1.15</version>
   </parent>
   <artifactId>jedi-nodes-java</artifactId>
-  <version>0.24-SNAPSHOT</version>
+  <version>0.23-SNAPSHOT</version>
   <description>Generic node containers serializable/deserializable with jackson and other libraries.</description>
   <url>${git.url}</url>
   <licenses>
