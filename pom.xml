@@ -7,7 +7,7 @@
     <version>1.15</version>
   </parent>
   <artifactId>jedi-nodes-java</artifactId>
-  <version>0.23</version>
+  <version>0.24-SNAPSHOT</version>
   <description>Generic node containers serializable/deserializable with jackson and other libraries.</description>
   <url>${git.url}</url>
   <licenses>
@@ -27,7 +27,7 @@
   <scm>
     <connection>scm:git:${git.url}.git</connection>
     <developerConnection>scm:git:${git.url}.git</developerConnection>
-    <tag>jedi-nodes-java-0.23</tag>
+    <tag>${project.artifactId}-${project.version}</tag>
     <url>${git.url}</url>
   </scm>
   <issueManagement>
@@ -243,7 +243,7 @@
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore/>
+                    <ignore />
                   </action>
                 </pluginExecution>
               </pluginExecutions>
@@ -390,7 +390,7 @@
                   </goals>
                 </pluginExecutionFilter>
                 <action>
-                  <ignore/>
+                  <ignore />
                 </action>
               </pluginExecution>
               <pluginExecution>
@@ -403,7 +403,7 @@
                   </goals>
                 </pluginExecutionFilter>
                 <action>
-                  <ignore/>
+                  <ignore />
                 </action>
               </pluginExecution>
             </pluginExecutions>
@@ -420,9 +420,9 @@
         <!--$NO-MVN-MAN-VER$ -->
         <configuration>
           <target>
-            <echo message="ant cleanup started."/>
-            <fixcrlf eol="unix" excludes="target/**/* .git/**/* src/test/resources/lsports/**/*" includes="**/*.java **/*.xml" preservelastmodified="true" srcdir="${basedir}" tab="remove" tablength="2"/>
-            <echo message="ant cleanup finished."/>
+            <echo message="ant cleanup started." />
+            <fixcrlf eol="unix" excludes="target/**/* .git/**/* src/test/resources/lsports/**/*" includes="**/*.java **/*.xml" preservelastmodified="true" srcdir="${basedir}" tab="remove" tablength="2" />
+            <echo message="ant cleanup finished." />
           </target>
         </configuration>
         <!-- not always needed -->
