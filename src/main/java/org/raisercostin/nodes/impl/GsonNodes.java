@@ -16,36 +16,41 @@ import io.vavr.control.Option;
 import org.raisercostin.nodes.Nodes;
 
 public class GsonNodes implements Nodes {
-  public static Gson gson = new GsonBuilder().setPrettyPrinting().addSerializationExclusionStrategy(new ExclusionStrategy() {
-    @Override
-    public boolean shouldSkipField(FieldAttributes f) {
-      return f.getAnnotation(JsonIgnore.class) != null;
-    }
+  public static Gson gson = new GsonBuilder().setPrettyPrinting()
+    .addSerializationExclusionStrategy(new ExclusionStrategy()
+      {
+        @Override
+        public boolean shouldSkipField(FieldAttributes f) {
+          return f.getAnnotation(JsonIgnore.class) != null;
+        }
 
-    @Override
-    public boolean shouldSkipClass(Class<?> aClass) {
-      return false;
-    }
-  }).registerTypeAdapter(OffsetDateTime.class, new TypeAdapter<OffsetDateTime>() {
-    @Override
-    public void write(JsonWriter out, OffsetDateTime value) throws IOException {
-      if (value != null) {
-        out.value(value.toString());
-      } else {
-        out.nullValue();
-      }
-    }
+        @Override
+        public boolean shouldSkipClass(Class<?> aClass) {
+          return false;
+        }
+      })
+    .registerTypeAdapter(OffsetDateTime.class, new TypeAdapter<OffsetDateTime>()
+      {
+        @Override
+        public void write(JsonWriter out, OffsetDateTime value) throws IOException {
+          if (value != null) {
+            out.value(value.toString());
+          } else {
+            out.nullValue();
+          }
+        }
 
-    @Override
-    public OffsetDateTime read(JsonReader in) throws IOException {
-      String value = in.nextString();
-      if (value != null) {
-        return OffsetDateTime.parse(value);
-      } else {
-        return null;
-      }
-    }
-  }).create();
+        @Override
+        public OffsetDateTime read(JsonReader in) throws IOException {
+          String value = in.nextString();
+          if (value != null) {
+            return OffsetDateTime.parse(value);
+          } else {
+            return null;
+          }
+        }
+      })
+    .create();
 
   public static String prettyPrintJson(String response2) {
     String json = gson.toJson(new JsonParser().parse(response2));

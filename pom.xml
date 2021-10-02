@@ -565,7 +565,6 @@
           </execution>
         </executions>
       </plugin>
-       -->
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
@@ -573,6 +572,7 @@
           <mainClass>${main.class}</mainClass>
         </configuration>
       </plugin>
+       -->
       <plugin>
         <groupId>au.com.acegi</groupId>
         <artifactId>xml-format-maven-plugin</artifactId>
