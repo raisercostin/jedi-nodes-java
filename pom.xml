@@ -10,44 +10,6 @@
   <version>0.24-SNAPSHOT</version>
   <description>Generic node containers serializable/deserializable with jackson and other libraries.</description>
   <url>${git.url}</url>
-  <scm>
-    <connection>scm:git:${git.url}.git</connection>
-    <developerConnection>scm:git:${git.url}.git</developerConnection>
-    <url>${git.url}</url>
-    <tag>${project.artifactId}-${project.version}</tag>
-  </scm>
-  <distributionManagement>
-    <repository>
-      <id>${dist.id.prefix}-maven-releases</id>
-      <url>https://api.bintray.com/maven/${bintray.user}/${bintray.repo}/${bintray.package}/;publish=1</url>
-    </repository>
-  </distributionManagement>
-  <issueManagement>
-    <system>Github</system>
-    <url>https://github.com/raisercostin/${project.artifactId}/issues</url>
-  </issueManagement>
-  <properties>
-    <org>raisercostin</org>
-    <bintray.user>raisercostin</bintray.user>
-    <git.userOrGroup>raisercostin</git.userOrGroup>
-    <!--<docker.image.prefix>registry.gitlab.com/dcsi/all/docker/custom</docker.image.prefix> -->
-    <docker.image.prefix>com.revomatico</docker.image.prefix>
-
-    <!--  -->
-    <git.repo>${project.artifactId}</git.repo>
-    <git.host>github.com</git.host>
-    <git.url>https://${git.host}/${git.userOrGroup}/${git.repo}</git.url>
-    <dist.id.prefix>bintray</dist.id.prefix>
-    <bintray.repo>maven</bintray.repo>
-    <bintray.package>${project.artifactId}</bintray.package>
-    <dist.url>https://api.bintray.com/maven/${bintray.user}/${bintray.repo}/${bintray.package}</dist.url>
-    <dist.release.url>${dist.url}/releases/</dist.release.url>
-    <dist.snapshot.url>${dist.url}/snapshots/</dist.snapshot.url>
-    <dist.site.url>${dist.url}/sites/${project.groupId}-${project.artifactId}-${project.version}</dist.site.url>
-    <springboot.version>2.3.5.RELEASE</springboot.version>
-    <checkerframework.version>2.10.0</checkerframework.version>
-    <lombok.version>1.18.20</lombok.version>
-  </properties>
   <licenses>
     <license>
       <name>The Apache License, Version 2.0</name>
@@ -62,16 +24,69 @@
       <organizationUrl>http://raisercostin.org</organizationUrl>
     </developer>
   </developers>
+  <scm>
+    <connection>scm:git:${git.url}.git</connection>
+    <developerConnection>scm:git:${git.url}.git</developerConnection>
+    <tag>${project.artifactId}-${project.version}</tag>
+    <url>${git.url}</url>
+  </scm>
+  <issueManagement>
+    <system>Github</system>
+    <url>https://github.com/raisercostin/${project.artifactId}/issues</url>
+  </issueManagement>
+  <distributionManagement>
+    <repository>
+      <id>github</id>
+      <url>scm:git:${dist.url}</url>
+    </repository>
+    <snapshotRepository>
+      <id>git-release-snapshot</id>
+      <url>git:master:https2://github.com/raisercostin/jedio.git</url>
+      <!--
+      <url>git:master://git@github.com:raisercostin/jedio.git</url>
+      -->
+      <!-- <url>https://github.com/raisercostin/jedio.git</url> -->
+      <!--<url>git:${dist.snapshot.url}</url> ${dist.url}-->
+    </snapshotRepository>
+  </distributionManagement>
+  <properties>
+    <checkerframework.version>2.10.0</checkerframework.version>
+    <createChecksum>false</createChecksum>
+    <dist.release.url>https://github.com/raisercostin/maven-repo.git</dist.release.url>
+    <dist.site.url>${dist.url}/sites/${project.groupId}-${project.artifactId}-${project.version}</dist.site.url>
+    <dist.snapshot.url>target/snapshots/</dist.snapshot.url>
+    <dist.url>${git.url}</dist.url>
+    <!--<docker.image.prefix>registry.gitlab.com/dcsi/all/docker/custom</docker.image.prefix> -->
+    <docker.image.prefix>com.revomatico</docker.image.prefix>
+    <experimentalCoroutines>enable</experimentalCoroutines>
+    <git.host>github.com</git.host>
+    <git.repo>${project.artifactId}</git.repo>
+    <git.url>https://${git.host}/${git.userOrGroup}/${git.repo}</git.url>
+    <git.userOrGroup>raisercostin</git.userOrGroup>
+    <jackson-bom.version>2.12.3</jackson-bom.version>
+    <lombok.version>1.18.20</lombok.version>
+    <maven.build.timestamp.format>yyyyMMdd'T'HHmmss</maven.build.timestamp.format>
+    <maven.test.skip>false</maven.test.skip>
+    <reactor.version>3.2.5.RELEASE</reactor.version>
+    <spring.version>5.2.15.RELEASE</spring.version>
+    <springboot.version>2.3.11.RELEASE</springboot.version>
+  </properties>
   <dependencyManagement>
     <dependencies>
       <!-- https://stackoverflow.com/questions/16894032/how-to-use-poms-as-a-dependency-in-maven -->
-      <!-- Spring Boot BOM -->
+      <dependency>
+        <groupId>com.fasterxml.jackson</groupId>
+        <artifactId>jackson-bom</artifactId>
+        <version>${jackson-bom.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
       <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>
         <version>${springboot.version}</version>
-        <scope>import</scope>
         <type>pom</type>
+        <scope>import</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -184,24 +199,417 @@
   </dependencies>
   <repositories>
     <repository>
-      <id>jcenter-bintray</id>
-      <url>https://jcenter.bintray.com/</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
+      <id>synergian-repo</id>
+      <url>https://raw.github.com/synergian/wagon-git/releases</url>
     </repository>
     <repository>
-      <id>raisercostin-bintray</id>
-      <url>https://dl.bintray.com/raisercostin/maven</url>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
+      <id>spring-milestones</id>
+      <name>Spring Milestones</name>
+      <url>https://repo.spring.io/milestone</url>
+    </repository>
+    <repository>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
+      <id>raisercostin-github</id>
+      <url>https://raw.githubusercontent.com/raisercostin/maven-repo/master/</url>
     </repository>
   </repositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>synergian-repo</id>
+      <url>https://raw.github.com/synergian/wagon-git/releases</url>
+    </pluginRepository>
+  </pluginRepositories>
+  <build>
+    <finalName>${project.artifactId}</finalName>
+    <pluginManagement>
+      <plugins>
+        <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+        <plugin>
+          <groupId>org.eclipse.m2e</groupId>
+          <artifactId>lifecycle-mapping</artifactId>
+          <version>1.0.0</version>
+          <configuration>
+            <lifecycleMappingMetadata>
+              <pluginExecutions>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>au.com.acegi</groupId>
+                    <artifactId>xml-format-maven-plugin</artifactId>
+                    <versionRange>[3.0.7,)</versionRange>
+                    <goals>
+                      <goal>xml-format</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <ignore />
+                  </action>
+                </pluginExecution>
+              </pluginExecutions>
+            </lifecycleMappingMetadata>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>com.spotify</groupId>
+        <artifactId>dockerfile-maven-plugin</artifactId>
+        <version>1.4.7</version>
+        <configuration>
+          <!--<repository>${docker.image.prefix}/${project.artifactId}</repository> -->
+          <!--<registryUrl>http://office-dockerregistry.openobjects.com:5000/v2/</registryUrl> -->
+          <buildArgs>
+            <JAR_FILE>${project.build.finalName}.jar</JAR_FILE>
+          </buildArgs>
+          <googleContainerRegistryEnabled>false</googleContainerRegistryEnabled>
+        </configuration>
+      </plugin>
+      <!-- https://github.com/revelc/formatter-maven-plugin -->
+      <plugin>
+        <groupId>net.revelc.code.formatter</groupId>
+        <artifactId>formatter-maven-plugin</artifactId>
+        <version>2.8.1</version>
+        <configuration>
+          <configFile>${project.basedir}/src/build/eclipse-2020-06-18--java-code-style-formatter.xml</configFile>
+          <configJsonFile>${project.basedir}/src/build/json-formatter.properties</configJsonFile>
+          <sourceDirectory>${basedir}</sourceDirectory>
+          <includes>
+            <include>**/**</include>
+          </includes>
+          <excludes>
+            <exclude>.git/</exclude>
+            <exclude>target/</exclude>
+            <exclude>**/*.xml</exclude>
+          </excludes>
+          <lineEnding>LF</lineEnding>
+          <!-- <encoding>UTF-8</encoding> -->
+          <overrideConfigCompilerVersion>true</overrideConfigCompilerVersion>
+          <compilerSource>${myJavaVersion}</compilerSource>
+          <compilerCompliance>${myJavaVersion}</compilerCompliance>
+          <compilerTargetPlatform>${myJavaVersion}</compilerTargetPlatform>
+          <!-- <skipJsonFormatting>true</skipJsonFormatting> -->
+          <skipXmlFormatting>true</skipXmlFormatting>
+        </configuration>
+        <dependencies>
+          <!-- to use eclipse compiler like in
+          - https://stackoverflow.com/questions/33164976/using-eclipse-java-compiler-ecj-in-maven-builds
+          - https://projectlombok.org/setup/ecj
+          - https://projectlombok.org/setup/ecj-in-maven-pom-example.xml
+
+          <dependency>
+            <groupId>org.codehaus.plexus</groupId>
+            <artifactId>plexus-compiler-eclipse</artifactId>
+            <version>2.8.6</version>
+          </dependency>
+          <dependency>
+            <groupId>org.eclipse.jdt</groupId>
+            <artifactId>ecj</artifactId>
+            <version>3.21.0</version>
+          </dependency>
+          -->
+        </dependencies>
+        <executions>
+          <execution>
+            <id>all-format</id>
+            <goals>
+              <goal>format</goal>
+            </goals>
+            <phase>validate</phase>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>pl.project13.maven</groupId>
+        <artifactId>git-commit-id-plugin</artifactId>
+        <configuration>
+          <dotGitDirectory>${project.basedir}/.git</dotGitDirectory>
+          <prefix>git</prefix>
+          <verbose>false</verbose>
+          <generateGitPropertiesFile>true</generateGitPropertiesFile>
+          <generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties</generateGitPropertiesFilename>
+          <format>properties</format>
+          <gitDescribe>
+            <skip>false</skip>
+            <always>false</always>
+            <dirty>-dirty</dirty>
+          </gitDescribe>
+        </configuration>
+        <executions>
+          <execution>
+            <id>get-the-git-infos</id>
+            <goals>
+              <goal>revision</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- lombok for ecj compiler
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.1.1</version>
+        <executions>
+          <execution>
+            <id>get-lombok</id>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <phase>validate</phase>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.projectlombok</groupId>
+                  <artifactId>lombok</artifactId>
+                  <version>${lombok.version}</version>
+                  <type>jar</type>
+                  <outputDirectory>${project.build.directory}</outputDirectory>
+                  <destFileName>lombok.jar</destFileName>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      -->
+      <plugin>
+        <groupId>org.eclipse.m2e</groupId>
+        <artifactId>lifecycle-mapping</artifactId>
+        <configuration>
+          <lifecycleMappingMetadata>
+            <pluginExecutions>
+              <pluginExecution>
+                <pluginExecutionFilter>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-resources-plugin</artifactId>
+                  <versionRange>[1.0,)</versionRange>
+                  <goals>
+                    <goal>resources</goal>
+                    <goal>testResources</goal>
+                  </goals>
+                </pluginExecutionFilter>
+                <action>
+                  <ignore />
+                </action>
+              </pluginExecution>
+              <pluginExecution>
+                <pluginExecutionFilter>
+                  <groupId>org.apache.camel</groupId>
+                  <artifactId>camel-package-maven-plugin</artifactId>
+                  <versionRange>[2.19.4,)</versionRange>
+                  <goals>
+                    <goal>prepare-example</goal>
+                  </goals>
+                </pluginExecutionFilter>
+                <action>
+                  <ignore />
+                </action>
+              </pluginExecution>
+            </pluginExecutions>
+          </lifecycleMappingMetadata>
+        </configuration>
+      </plugin>
+      <!-- https://github.com/coveo/fmt-maven-plugin -->
+      <!-- <plugin> <groupId>com.coveo</groupId> <artifactId>fmt-maven-plugin</artifactId> <version>2.6.0</version> <executions> <execution> <goals>
+        <goal>format</goal> </goals> </execution> </executions> </plugin> -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.8</version>
+        <!--$NO-MVN-MAN-VER$ -->
+        <configuration>
+          <target>
+            <echo message="ant cleanup started." />
+            <fixcrlf eol="unix" excludes="target/**/* .git/**/* src/test/resources/lsports/**/*" includes="**/*.java **/*.xml" preservelastmodified="true" srcdir="${basedir}" tab="remove" tablength="2" />
+            <echo message="ant cleanup finished." />
+          </target>
+        </configuration>
+        <!-- not always needed -->
+        <!--
+        <executions>
+          <execution>
+            <id>all-format</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+        -->
+      </plugin>
+      <!-- <sourceDirectory>src/main/kotlin</sourceDirectory> <testSourceDirectory>src/test/kotlin</testSourceDirectory> <plugin> <groupId>org.jetbrains.kotlin</groupId>
+        <artifactId>kotlin-maven-plugin</artifactId> <version>${kotlin.version}</version> <configuration> <nowarn>false</nowarn> <args> <arg>-Xjsr305=strict</arg>
+        Enable strict mode for JSR-305 annotations </args> </configuration> <executions> <execution> <id>compile</id> <phase>compile</phase> <goals>
+        <goal>compile</goal> </goals> <configuration> <sourceDirs> <sourceDir>${project.basedir}/src/main/kotlin</sourceDir> <sourceDir>${project.basedir}/src/main/java</sourceDir>
+        </sourceDirs> </configuration> </execution> <execution> <id>test-compile</id> <phase>test-compile</phase> <goals> <goal>test-compile</goal> </goals>
+        <configuration> <sourceDirs> <sourceDir>${project.basedir}/src/test/kotlin</sourceDir> <sourceDir>${project.basedir}/src/test/java</sourceDir>
+        </sourceDirs> </configuration> </execution> </executions> </plugin> -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <!-- <version>3.8.1</version> -->
+        <!-- to use eclipse compiler like in
+          - https://stackoverflow.com/questions/33164976/using-eclipse-java-compiler-ecj-in-maven-builds
+          - https://projectlombok.org/setup/ecj
+          - https://projectlombok.org/setup/ecj-in-maven-pom-example.xml
+          -->
+        <!--$NO-MVN-MAN-VER$ -->
+        <!--
+        <dependencies>
+          <dependency>
+            <groupId>org.codehaus.plexus</groupId>
+            <artifactId>plexus-compiler-eclipse</artifactId>
+            <version>2.8.6</version>
+          </dependency>
+          <dependency>
+            <groupId>org.eclipse.jdt</groupId>
+            <artifactId>ecj</artifactId>
+            <version>3.21.0</version>
+          </dependency>
+        </dependencies>
+         -->
+        <configuration>
+          <source>${source.java.version}</source>
+          <target>${target.java.version}</target>
+          <showWarnings>true</showWarnings>
+          <showDeprecation>true</showDeprecation>
+          <!-- eclipse compiler -->
+          <!--
+            set MAVEN_OPTS=-javaagent:target/lombok.jar=ECJ-
+            <release>11</release>
+           -->
+          <!--
+          <compilerId>eclipse</compilerId>
+          <fork>true</fork>
+          <compilerArgs>
+            <arg>-javaagent:target/lombok.jar=ECJ</arg>
+          </compilerArgs>
+           -->
+          <annotationProcessorPaths>
+            <path>
+              <groupId>org.projectlombok</groupId>
+              <artifactId>lombok</artifactId>
+              <version>${lombok.version}</version>
+            </path>
+          </annotationProcessorPaths>
+          <generatedSourcesDirectory>${project.build.directory}/generated-sources</generatedSourcesDirectory>
+        </configuration>
+        <!-- <executions> Replacing default-compile as it is treated specially by maven <execution> <id>default-compile</id> <phase>none</phase>
+          </execution> Replacing default-testCompile as it is treated specially by maven <execution> <id>default-testCompile</id> <phase>none</phase> </execution>
+          <execution> <id>java-compile</id> <phase>compile</phase> <goals> <goal>compile</goal> </goals> </execution> <execution> <id>java-test-compile</id>
+          <phase>test-compile</phase> <goals> <goal>testCompile</goal> </goals> </execution> </executions> -->
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <addClasspath>true</addClasspath>
+              <mainClass>${main.class}</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <useSystemClassLoader>false</useSystemClassLoader>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>com.github.spotbugs</groupId>
+        <artifactId>spotbugs-maven-plugin</artifactId>
+        <version>3.1.11</version>
+        <configuration>
+          <plugins>
+            <plugin>
+              <groupId>com.mebigfatguy.fb-contrib</groupId>
+              <artifactId>fb-contrib</artifactId>
+              <version>7.4.3.sb</version>
+            </plugin>
+          </plugins>
+        </configuration>
+        <dependencies>
+          <!-- overwrite dependency on spotbugs if you want to specify the version of spotbugs -->
+          <dependency>
+            <groupId>com.github.spotbugs</groupId>
+            <artifactId>spotbugs</artifactId>
+            <version>3.1.11</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+      <!--
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>make-assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <archive>
+                <manifest>
+                  <mainClass>${main.class}</mainClass>
+                </manifest>
+              </archive>
+              <descriptorRefs>
+                <descriptorRef>jar-with-dependencies</descriptorRef>
+              </descriptorRefs>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+       -->
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+          <mainClass>${main.class}</mainClass>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>au.com.acegi</groupId>
+        <artifactId>xml-format-maven-plugin</artifactId>
+        <version>3.0.7</version>
+        <executions>
+          <execution>
+            <id>xml-format</id>
+            <goals>
+              <goal>xml-format</goal>
+            </goals>
+            <phase>validate</phase>
+            <configuration>
+              <excludes>
+                <exclude>**/src/main/resources/**</exclude>
+                <exclude>**/src/test/resources/**</exclude>
+                <exclude>.git/**</exclude>
+                <exclude>**/target/**</exclude>
+                <exclude>.m2/**</exclude>
+              </excludes>
+              <!-- configure your formatting preferences here (see link below) https://acegi.github.io/xml-format-maven-plugin/xml-format-mojo.html -->
+              <indentSize>2</indentSize>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+    <extensions>
+      <extension>
+        <groupId>org.apache.maven.scm</groupId>
+        <artifactId>maven-scm-provider-gitexe</artifactId>
+        <version>1.11.2</version>
+      </extension>
+      <extension>
+        <groupId>ar.com.synergian</groupId>
+        <artifactId>wagon-git</artifactId>
+        <version>0.3.0</version>
+      </extension>
+    </extensions>
+  </build>
 </project>
