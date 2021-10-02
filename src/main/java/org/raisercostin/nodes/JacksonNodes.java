@@ -3,7 +3,11 @@ package org.raisercostin.nodes;
 import java.util.List;
 
 import com.fasterxml.jackson.core.FormatSchema;
+import com.fasterxml.jackson.core.PrettyPrinter;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.core.util.DefaultIndenter;
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter.Indenter;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MappingIterator;
@@ -11,12 +15,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 import com.fasterxml.jackson.module.jsonSchema.factories.SchemaFactoryWrapper;
-import com.google.common.base.Strings;
 import io.vavr.Function1;
 import io.vavr.collection.Iterator;
 import io.vavr.collection.Map;
 import org.apache.commons.lang3.StringUtils;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.raisercostin.nodes.impl.ExceptionUtils;
+import org.raisercostin.nodes.impl.JsonNodes;
 
 public interface JacksonNodes extends Nodes {
   org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(JacksonNodes.class);

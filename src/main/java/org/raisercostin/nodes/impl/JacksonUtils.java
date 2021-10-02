@@ -17,7 +17,6 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.PrettyPrinter;
 import com.fasterxml.jackson.core.util.DefaultIndenter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -31,6 +30,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
@@ -127,6 +127,15 @@ public class JacksonUtils {
     if (mapper instanceof XmlMapper) {
       ((XmlMapper) mapper).setDefaultUseWrapper(false);
     }
+    if (mapper instanceof JsonMapper) {
+      DefaultIndenter indenter = new DefaultIndenter("  ", "\n");
+      DefaultPrettyPrinter defaultPrettyPrinter = (DefaultPrettyPrinter) mapper.getSerializationConfig()
+        .getDefaultPrettyPrinter();
+      DefaultPrettyPrinter printer = new DefaultPrettyPrinter(defaultPrettyPrinter);
+      printer.indentObjectsWith(indenter);
+      printer.indentArraysWith(indenter);
+      mapper.setDefaultPrettyPrinter(printer);
+    }
 
     // mapper.setDefaultPrettyPrinter(createCustomPrettyPrinter());
     // mapper.setAnnotationIntrospector(new JacksonLombokAnnotationIntrospector());
@@ -187,17 +196,17 @@ public class JacksonUtils {
       //context.setMixInAnnotations(StackTraceElement.class, StackTraceElementMixin.class);
     }
   }
-
-  // TODO doesn't work for xml
-  private static PrettyPrinter createCustomPrettyPrinter() {
-    // Setup a pretty printer with an indenter (indenter has 4 spaces in this case)
-    // DefaultPrettyPrinter.Indenter indenter = new DefaultIndenter("", DefaultIndenter.SYS_LF);
-    DefaultPrettyPrinter.Indenter indenter = new DefaultIndenter("  ", "\n");
-    DefaultPrettyPrinter printer = new DefaultPrettyPrinter();
-    printer.indentObjectsWith(indenter);
-    printer.indentArraysWith(indenter);
-    return printer.withoutSpacesInObjectEntries();
-  }
+  //
+  //  // TODO doesn't work for xml
+  //  private static PrettyPrinter createCustomPrettyPrinter() {
+  //    // Setup a pretty printer with an indenter (indenter has 4 spaces in this case)
+  //    // DefaultPrettyPrinter.Indenter indenter = new DefaultIndenter("", DefaultIndenter.SYS_LF);
+  //    DefaultPrettyPrinter.Indenter indenter = new DefaultIndenter("  ", "\n");
+  //    DefaultPrettyPrinter printer = new DefaultPrettyPrinter();
+  //    printer.indentObjectsWith(indenter);
+  //    printer.indentArraysWith(indenter);
+  //    return printer.withoutSpacesInObjectEntries();
+  //  }
 
   public static <T extends ObjectMapper> void configureExclusions(T mapper, String... excludedFields) {
     mapper.addMixIn(Object.class, PropertyFilterMixIn.class);

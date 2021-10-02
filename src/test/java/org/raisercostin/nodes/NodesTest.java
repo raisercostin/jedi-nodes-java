@@ -8,17 +8,19 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.PrettyPrinter;
+import com.fasterxml.jackson.core.util.DefaultIndenter;
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.typesafe.config.ConfigSyntax;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Value;
-import lombok.With;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.raisercostin.jedio.Locations;
-import org.raisercostin.nodes.impl.HoconNodes;
 
 class NodesTest {
   public static class SampleAddress {
@@ -226,5 +228,53 @@ class NodesTest {
     assertThat(new Point().withY(2).toString()).isEqualTo("NodesTest.Point(x=3, y=2)");
     assertThat(new Point().withX(5).withY(2).toString()).isEqualTo("NodesTest.Point(x=5, y=2)");
     assertThat(new Point().withX(5).toString()).isEqualTo("NodesTest.Point(x=5, y=0)");
+  }
+
+  @Test
+  void testInsensitiveConfig() {
+    Point a = Nodes.json.withIgnoreUnknwon()
+      // A bug prevents deserializing the catalog with this option active
+      .withMapper(mapper -> mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, false))
+      .toObject("{\"x\":4}", Point.class);
+    assertThat(a.x).isEqualTo(4);
+
+    Point b = Nodes.json.withIgnoreUnknwon()
+      // A bug prevents deserializing the catalog with this option active
+      .withMapper(mapper -> mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, false))
+      .toObject("{\"X\":4}", Point.class);
+    assertThat(a.x).isEqualTo(4);
+  }
+
+  @Test
+  void testConfigurePrettyPrinter() {
+    Point point = new Point(5, 7);
+    String defaultResult = "{\n  \"x\" : 5,\n  \"y\" : 7\n}";
+    assertThat(Nodes.json.toString(point)).isEqualTo(defaultResult);
+    assertThat(Nodes.json.withIdenter("  ", "\n").toString(point))
+      .isEqualTo(defaultResult);
+    assertThat(Nodes.json.withIdenter(new DefaultIndenter("", "")).toString(point))
+      .isEqualTo("{\"x\" : 5,\"y\" : 7}");
+    assertThat(Nodes.json.withIdenter("", "").toString(point))
+      .isEqualTo("{\"x\" : 5,\"y\" : 7}");
+    assertThat(Nodes.json.withIdenter("++", "\n").toString(point))
+      .isEqualTo("{\n++\"x\" : 5,\n++\"y\" : 7\n}");
+    assertThat(Nodes.json.withIdenter("", "\n").toString(point))
+      .isEqualTo("{\n\"x\" : 5,\n\"y\" : 7\n}");
+    assertThat(Nodes.json.withIdenter("", "").toString(point))
+      .isEqualTo("{\"x\" : 5,\"y\" : 7}");
+
+    assertThat(
+      Nodes.json.withIdenter("", "").withDefaultPrettyPrinter(x -> x.withoutSpacesInObjectEntries()).toString(point))
+        .isEqualTo("{\"x\":5,\"y\":7}");
+    assertThat(
+      Nodes.json.withIdenter("", "").withDefaultPrettyPrinter(x -> x.withSpacesInObjectEntries()).toString(point))
+        .isEqualTo("{\"x\" : 5,\"y\" : 7}");
+    assertThat(
+      Nodes.json.withIdenter("", "").withDefaultPrettyPrinter(x -> x.withRootSeparator("bau")).toString(point))
+        .isEqualTo("{\"x\" : 5,\"y\" : 7}");
+
+    assertThat(Nodes.json.toString(point))
+      .describedAs("With all the other changes the default mapper should not be changed")
+      .isEqualTo(defaultResult);
   }
 }
