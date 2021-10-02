@@ -46,6 +46,7 @@
     <dist.site.url>${dist.url}/sites/${project.groupId}-${project.artifactId}-${project.version}</dist.site.url>
     <springboot.version>2.3.5.RELEASE</springboot.version>
     <checkerframework.version>2.10.0</checkerframework.version>
+    <lombok.version>1.18.20</lombok.version>
   </properties>
   <licenses>
     <license>
@@ -104,13 +105,13 @@
     <dependency>
       <groupId>com.fasterxml.jackson.module</groupId>
       <artifactId>jackson-module-jsonSchema</artifactId>
-      <version>2.12.0-rc1</version>
+      <version>2.12.5</version>
     </dependency>
     <!-- utilities -->
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>29.0-jre</version>
+      <version>31.0.1-jre</version>
     </dependency>
     <dependency>
       <groupId>com.typesafe</groupId>
