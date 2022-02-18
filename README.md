@@ -34,6 +34,7 @@ other format)
 
 # Usage
 
+
 ## Code
 
 See test
@@ -61,6 +62,14 @@ class NodesTest {
     System.out.println("PROP\n"+Nodes.prop.toString(a));
     System.out.println("XML\n"+Nodes.xml.toString(a));
     System.out.println("YML\n"+Nodes.yml.toString(a));
+  }
+  @Test
+  void testDeserialization() {
+    SamplePerson p1 = new SamplePerson();
+    var content = Nodes.json.toString(p1);
+    System.out.println(content);
+    var p2 = Nodes.json.toObject(content, SamplePerson.class);
+    System.out.println(p2);
   }
   ...
 }
