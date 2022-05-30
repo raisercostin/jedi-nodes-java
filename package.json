@@ -1,0 +1,8 @@
+{
+  "name": "revobet-proxy",
+  "scripts": {
+    "normalize-pom": "bash .\\scripts.sh normalizePom",
+    "release-prepare": "bash .\\scripts.sh releasePrepare",
+    "release-perform-local": "bash .\\scripts.sh releasePerformLocal"
+  }
+}

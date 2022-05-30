@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.raisercostin</groupId>
     <artifactId>maven-defaults-raisercostin</artifactId>
-    <version>1.15</version>
+    <version>1.23</version>
   </parent>
+  <groupId>org.raisercostin</groupId>
   <artifactId>jedi-nodes-java</artifactId>
   <version>0.24-SNAPSHOT</version>
   <description>Generic node containers serializable/deserializable with jackson and other libraries.</description>
@@ -25,29 +27,31 @@
     </developer>
   </developers>
   <scm>
-    <connection>scm:git:${git.url}.git</connection>
-    <developerConnection>scm:git:${git.url}.git</developerConnection>
+    <connection>${scm.connection.url}</connection>
+    <developerConnection>${scm.connection.url}</developerConnection>
     <tag>${project.artifactId}-${project.version}</tag>
     <url>${git.url}</url>
   </scm>
   <issueManagement>
     <system>Github</system>
-    <url>https://github.com/raisercostin/${project.artifactId}/issues</url>
+    <url>${issues.url}</url>
   </issueManagement>
   <distributionManagement>
     <repository>
-      <id>github</id>
-      <url>scm:git:${dist.url}</url>
+      <id>dist-release-${dist.id}</id>
+      <url>${dist.release.url}</url>
     </repository>
     <snapshotRepository>
-      <id>git-release-snapshot</id>
-      <url>git:master:https2://github.com/raisercostin/jedio.git</url>
-      <!--
-      <url>git:master://git@github.com:raisercostin/jedio.git</url>
-      -->
-      <!-- <url>https://github.com/raisercostin/jedio.git</url> -->
-      <!--<url>git:${dist.snapshot.url}</url> ${dist.url}-->
+      <uniqueVersion>false</uniqueVersion>
+      <id>dist-snapshot-${dist.id}</id>
+      <url>${dist.snapshot.url}</url>
     </snapshotRepository>
+    <!-- 
+    <site>
+      <id>dist-site-${dist.id}</id>
+      <url>${dist.site.url}</url>
+    </site>
+     -->
   </distributionManagement>
   <properties>
     <checkerframework.version>2.10.0</checkerframework.version>
@@ -92,10 +96,76 @@
   </dependencyManagement>
   <dependencies>
     <dependency>
-      <groupId>org.projectlombok</groupId>
-      <artifactId>lombok</artifactId>
-      <version>${lombok.version}</version>
-      <scope>provided</scope>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.typesafe</groupId>
+      <artifactId>config</artifactId>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+    </dependency>
+    <!-- utilities -->
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>31.0.1-jre</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.dataformat</groupId>
+      <artifactId>jackson-dataformat-csv</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.dataformat</groupId>
+      <artifactId>jackson-dataformat-properties</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.dataformat</groupId>
+      <artifactId>jackson-dataformat-xml</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.dataformat</groupId>
+      <artifactId>jackson-dataformat-yaml</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-jdk8</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-jsr310</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.module</groupId>
+      <artifactId>jackson-module-jsonSchema</artifactId>
+      <version>2.12.5</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-core</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <!-- logs -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
     </dependency>
     <!-- 
     <dependency>
@@ -108,77 +178,15 @@
       <groupId>com.github.spotbugs</groupId>
       <artifactId>spotbugs-annotations</artifactId>
     </dependency>
-    <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
-    <dependency>
-      <groupId>com.google.code.gson</groupId>
-      <artifactId>gson</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.module</groupId>
-      <artifactId>jackson-module-jsonSchema</artifactId>
-      <version>2.12.5</version>
-    </dependency>
-    <!-- utilities -->
-    <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-      <version>31.0.1-jre</version>
-    </dependency>
-    <dependency>
-      <groupId>com.typesafe</groupId>
-      <artifactId>config</artifactId>
-    </dependency>
-    <!-- logs -->
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>jcl-over-slf4j</artifactId>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-core</artifactId>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-classic</artifactId>
-      <optional>true</optional>
-    </dependency>
     <dependency>
       <groupId>io.vavr</groupId>
       <artifactId>vavr-jackson</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.fasterxml.jackson.datatype</groupId>
-      <artifactId>jackson-datatype-jdk8</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.datatype</groupId>
-      <artifactId>jackson-datatype-jsr310</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.dataformat</groupId>
-      <artifactId>jackson-dataformat-xml</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.dataformat</groupId>
-      <artifactId>jackson-dataformat-yaml</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.dataformat</groupId>
-      <artifactId>jackson-dataformat-csv</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.dataformat</groupId>
-      <artifactId>jackson-dataformat-properties</artifactId>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>${lombok.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.raisercostin</groupId>
@@ -191,10 +199,6 @@
           <artifactId>jedi-nodes-java</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-lang3</artifactId>
     </dependency>
   </dependencies>
   <repositories>
@@ -243,7 +247,7 @@
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore />
+                    <ignore/>
                   </action>
                 </pluginExecution>
               </pluginExecutions>
@@ -390,7 +394,7 @@
                   </goals>
                 </pluginExecutionFilter>
                 <action>
-                  <ignore />
+                  <ignore/>
                 </action>
               </pluginExecution>
               <pluginExecution>
@@ -403,7 +407,7 @@
                   </goals>
                 </pluginExecutionFilter>
                 <action>
-                  <ignore />
+                  <ignore/>
                 </action>
               </pluginExecution>
             </pluginExecutions>
@@ -420,9 +424,9 @@
         <!--$NO-MVN-MAN-VER$ -->
         <configuration>
           <target>
-            <echo message="ant cleanup started." />
-            <fixcrlf eol="unix" excludes="target/**/* .git/**/* src/test/resources/lsports/**/*" includes="**/*.java **/*.xml" preservelastmodified="true" srcdir="${basedir}" tab="remove" tablength="2" />
-            <echo message="ant cleanup finished." />
+            <echo message="ant cleanup started."/>
+            <fixcrlf eol="unix" excludes="target/**/* .git/**/* src/test/resources/lsports/**/*" includes="**/*.java **/*.xml" preservelastmodified="true" srcdir="${basedir}" tab="remove" tablength="2"/>
+            <echo message="ant cleanup finished."/>
           </target>
         </configuration>
         <!-- not always needed -->
