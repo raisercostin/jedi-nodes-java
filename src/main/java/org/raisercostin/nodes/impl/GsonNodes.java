@@ -42,11 +42,12 @@ public class GsonNodes implements Nodes {
 
         @Override
         public OffsetDateTime read(JsonReader in) throws IOException {
-          String value = in.nextString();
-          if (value != null) {
-            return OffsetDateTime.parse(value);
-          } else {
+          if (in.peek() == JsonToken.NULL) {
+            in.nextNull();
             return null;
+          } else {
+            String value = in.nextString();
+            return OffsetDateTime.parse(value);
           }
         }
       })
