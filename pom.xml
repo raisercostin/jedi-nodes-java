@@ -69,6 +69,7 @@
     <git.userOrGroup>raisercostin</git.userOrGroup>
     <jackson-bom.version>2.12.3</jackson-bom.version>
     <lombok.version>1.18.20</lombok.version>
+    <mainClass>None</mainClass>
     <maven.build.timestamp.format>yyyyMMdd'T'HHmmss</maven.build.timestamp.format>
     <maven.test.skip>false</maven.test.skip>
     <reactor.version>3.2.5.RELEASE</reactor.version>
@@ -76,8 +77,8 @@
     <springboot.version>2.3.11.RELEASE</springboot.version>
   </properties>
   <dependencyManagement>
+    <!-- https://stackoverflow.com/questions/16894032/how-to-use-poms-as-a-dependency-in-maven -->
     <dependencies>
-      <!-- https://stackoverflow.com/questions/16894032/how-to-use-poms-as-a-dependency-in-maven -->
       <dependency>
         <groupId>com.fasterxml.jackson</groupId>
         <artifactId>jackson-bom</artifactId>
@@ -203,28 +204,22 @@
   </dependencies>
   <repositories>
     <repository>
-      <id>synergian-repo</id>
-      <url>https://raw.github.com/synergian/wagon-git/releases</url>
-    </repository>
-    <repository>
-      <id>spring-milestones</id>
-      <name>Spring Milestones</name>
-      <url>https://repo.spring.io/milestone</url>
-    </repository>
-    <repository>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
+      <id>central</id>
+      <name>Central Repository</name>
+      <url>https://repo.maven.apache.org/maven2</url>
+    </repository>
+    <repository>
       <id>raisercostin-github</id>
-      <url>https://raw.githubusercontent.com/raisercostin/maven-repo/master/</url>
+      <name>Repository at https://github.com/raisercostin/maven-repo</name>
+      <url>https://raw.githubusercontent.com/raisercostin/maven-repo/master</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
     </repository>
   </repositories>
-  <pluginRepositories>
-    <pluginRepository>
-      <id>synergian-repo</id>
-      <url>https://raw.github.com/synergian/wagon-git/releases</url>
-    </pluginRepository>
-  </pluginRepositories>
   <build>
     <finalName>${project.artifactId}</finalName>
     <pluginManagement>
@@ -247,7 +242,7 @@
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore/>
+                    <ignore />
                   </action>
                 </pluginExecution>
               </pluginExecutions>
@@ -420,7 +415,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
-        <version>1.8</version>
         <!--$NO-MVN-MAN-VER$ -->
         <configuration>
           <target>
@@ -511,7 +505,7 @@
           <archive>
             <manifest>
               <addClasspath>true</addClasspath>
-              <mainClass>${main.class}</mainClass>
+              <mainClass>${mainClass}</mainClass>
             </manifest>
           </archive>
         </configuration>
@@ -559,7 +553,7 @@
             <configuration>
               <archive>
                 <manifest>
-                  <mainClass>${main.class}</mainClass>
+                  <mainClass>${mainClass}</mainClass>
                 </manifest>
               </archive>
               <descriptorRefs>
@@ -573,7 +567,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
         <configuration>
-          <mainClass>${main.class}</mainClass>
+          <mainClass>${mainClass}</mainClass>
         </configuration>
       </plugin>
        -->
@@ -603,17 +597,5 @@
         </executions>
       </plugin>
     </plugins>
-    <extensions>
-      <extension>
-        <groupId>org.apache.maven.scm</groupId>
-        <artifactId>maven-scm-provider-gitexe</artifactId>
-        <version>1.11.2</version>
-      </extension>
-      <extension>
-        <groupId>ar.com.synergian</groupId>
-        <artifactId>wagon-git</artifactId>
-        <version>0.3.0</version>
-      </extension>
-    </extensions>
   </build>
 </project>
