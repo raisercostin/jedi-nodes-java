@@ -1,4 +1,5 @@
-[![Download](https://api.bintray.com/packages/raisercostin/maven/jedi-nodes-java/images/download.svg)](https://bintray.com/raisercostin/maven/jedi-nodes-java/_latestVersion)
+[![Versions](https://img.shields.io/maven-metadata/v?metadataUrl=https%3A%2F%2Fraw.githubusercontent.com%2Fraisercostin%2Fmaven-repo%2Fmaster%2Forg%2Fraisercostin%2Fjedi-nodes-java%2Fmaven-metadata.xml)](https://github.com/raisercostin/maven-repo/tree/master/org/raisercostin/jedi-nodes-java)
+
 
 # jedi-nodes-java
 Utilities to serialize/deserialize to/from data formats: yaml, json, gson, xml, properties, 
