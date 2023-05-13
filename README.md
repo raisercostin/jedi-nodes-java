@@ -150,7 +150,7 @@ Include this pom as parent.
 </dependency>
 ``` 
 
-Repository at https://raw.githubusercontent.com/raisercostin/maven-repo/master/org/raisercostin/jedi-nodes-java
+Browse https://github.com/raisercostin/maven-repo/tree/master/org/raisercostin/jedi-nodes-java
 
 ```
 <repository>
