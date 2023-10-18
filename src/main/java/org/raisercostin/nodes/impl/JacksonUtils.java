@@ -95,6 +95,7 @@ public class JacksonUtils {
     mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
     mapper.configure(SerializationFeature.WRITE_DATES_WITH_ZONE_ID, true);
     mapper.configure(SerializationFeature.WRAP_EXCEPTIONS, true);
+    mapper.configure(DeserializationFeature.FAIL_ON_TRAILING_TOKENS, true);
 
     //Will not work if the key is not comparable
     mapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, false);

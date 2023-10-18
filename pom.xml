@@ -66,6 +66,7 @@
     <git.repo>${project.artifactId}</git.repo>
     <git.url>https://${git.host}/${git.userOrGroup}/${git.repo}</git.url>
     <git.userOrGroup>raisercostin</git.userOrGroup>
+    <issues.url>${git.url}/issues</issues.url>
     <jackson-bom.version>2.12.3</jackson-bom.version>
     <lombok.version>1.18.20</lombok.version>
     <mainClass>None</mainClass>

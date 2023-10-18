@@ -3,6 +3,7 @@ package org.raisercostin.nodes;
 import java.util.List;
 
 import com.fasterxml.jackson.core.FormatSchema;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.PrettyPrinter;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.core.util.DefaultIndenter;
@@ -71,9 +72,18 @@ public interface JacksonNodes extends Nodes {
 
   default String prettyPrint(String content) {
     return ExceptionUtils.tryWithSuppressed(() -> {
-      JsonNode value = mapper().readTree(content);
-      return mapper().writeValueAsString(value);
+      return prettyPrint2(content);
     }, "Cannot prettyPrint [%s]: ", StringUtils.abbreviateMiddle(content, "[...]", 2000));
+  }
+
+  default String prettyPrint1(String content) throws JsonProcessingException, JsonMappingException {
+    //TODO This is more performant? but does not exclude fields.
+    JsonNode value = mapper().readTree(content);
+    return mapper().writeValueAsString(value);
+  }
+
+  default String prettyPrint2(String content) throws JsonProcessingException, JsonMappingException {
+    return toString(toObject(content, Object.class));
   }
 
   default FormatSchema schema() {

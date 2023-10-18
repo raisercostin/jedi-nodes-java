@@ -277,4 +277,9 @@ class NodesTest {
       .describedAs("With all the other changes the default mapper should not be changed")
       .isEqualTo(defaultResult);
   }
+
+  @Test
+  void testPrettyPrinterWithExclusion() {
+    assertThat(Nodes.json.excluding("foo").prettyPrint("{\"foo\":1,\"bar\":2}")).isEqualTo("{\n  \"bar\" : 2\n}");
+  }
 }

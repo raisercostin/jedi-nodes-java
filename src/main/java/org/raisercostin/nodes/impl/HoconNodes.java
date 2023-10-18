@@ -53,7 +53,7 @@ public class HoconNodes implements Nodes {
     return newConfig;
   }
 
-  private Config toConfigFromProperties(String content) {
+  public Config toConfigFromProperties(String content) {
     return toConfig(content, ConfigSyntax.PROPERTIES);
   }
 
@@ -76,7 +76,7 @@ public class HoconNodes implements Nodes {
     }
   }
 
-  private Config toConfig(String content, ConfigSyntax configSyntax) {
+  public Config toConfig(String content, ConfigSyntax configSyntax) {
     Config config = ConfigFactory
       .parseString(content,
         ConfigParseOptions.defaults().setSyntax(configSyntax).setOriginDescription(originDescription));
