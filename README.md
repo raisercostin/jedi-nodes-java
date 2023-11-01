@@ -160,8 +160,10 @@ Browse https://github.com/raisercostin/maven-repo/tree/master/org/raisercostin/j
 </repository>
 ```
 
-# Development
-- To release
-  `mvn release:prepare release:perform -DskipTests=true -Prelease -Darguments="-DskipTests=true -Prelease"` 
-- To update versions for a profile
-  `mvn versions:update-properties -Pjunit5`
+## Development
+
+- To release 
+  - ```
+    npm run release-prepare
+    npm run release-perform-local -- --releaseVersion 0.86
+    ```

@@ -1,8 +1,27 @@
 {
-  "name": "revobet-proxy",
+  "name": "jedi-nodes",
   "scripts": {
-    "normalize-pom": "bash .\\scripts.sh normalizePom",
-    "release-prepare": "bash .\\scripts.sh releasePrepare",
-    "release-perform-local": "bash .\\scripts.sh releasePerformLocal"
+    "normalize-pom": "ts-node scripts.ts normalizePom",
+    "prerelease-prepare": "npm install",
+    "release-prepare": "ts-node scripts.ts releasePrepare || echo 'If preparation failed is better to rollback' && npm run release-rollback",
+    "release-rollback": "mvn release:rollback",
+    "release-perform-local": "ts-node scripts.ts releasePerformLocal --repo d:/home/raiser/work/maven-repo --localMavenRepo c:/Users/raiser/.m2/repository --groupPath org/raisercostin --artifactId jedi-nodes",
+    "mvn-update-lib-versions": "mvn versions:update-properties && mvn versions:use-latest-versions",
+    "reformat": "mvn validate -DskipTests",
+    "reformat-prettier": "npx prettier --write .",
+    "dependency-check": "dependency-check:check"
+  },
+  "devDependencies" : {
+    "@prettier/plugin-xml" : "2.2.0",
+    "prettier" : "^2.7.1",
+    "prettier-plugin-java" : "1.6.2",
+    "prettier-plugin-kotlin" : "2.1.0",
+    "prettier-plugin-properties" : "0.2.0",
+    "prettier-plugin-sh" : "0.12.8",
+    "@types/shelljs" : "^0.8.14",
+    "@types/yargs" : "^17.0.29",
+    "shelljs" : "^0.8.5",
+    "ts-node" : "^10.9.1",
+    "yargs" : "^17.7.2"
   }
 }
