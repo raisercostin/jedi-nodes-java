@@ -2,7 +2,7 @@
   "name": "jedi-nodes",
   "scripts": {
     "normalize-pom": "ts-node scripts.ts normalizePom",
-    "release": "node run release-prepare && node run release-perform-local",
+    "release": "npm run release-prepare && npm run release-perform-local",
     "prerelease-prepare": "npm install",
     "release-prepare": "ts-node scripts.ts releasePrepare || echo 'If preparation failed is better to rollback' && npm run release-rollback",
     "release-rollback": "mvn release:rollback",
