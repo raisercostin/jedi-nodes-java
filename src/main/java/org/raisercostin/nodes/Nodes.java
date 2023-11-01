@@ -20,9 +20,7 @@ public interface Nodes {
   GsonNodes gson = new GsonNodes();
   XmlJacksonNodes xml = new XmlJacksonNodes();
   XmlJxbNodes xmlJxb = new XmlJxbNodes();
-  XmlJxbThenJacksonNodes xmlJxbThenJackson = Try.of(() -> new XmlJxbThenJacksonNodes())
-    .onFailure(e -> log.warn("Cannot init jaxb.", e))
-    .getOrNull();
+  XmlJxbThenJacksonNodes xmlJxbThenJackson = createJaxbOrNull();
   CsvNodes csv = new CsvNodes();
   PropNodes prop = new PropNodes();
   HoconNodes hocon = new HoconNodes();
@@ -31,6 +29,17 @@ public interface Nodes {
   XmlJxbNodes jxb = xmlJxb;
 
   <T> String toString(T value);
+
+  static XmlJxbThenJacksonNodes createJaxbOrNull() {
+    try {
+      return new XmlJxbThenJacksonNodes();
+    } catch (NoClassDefFoundError e) {
+      log.warn("Cannot init jaxb: {}. Probably you must include a jaxb library. Enable trace to see exception."
+          + e.getMessage());
+      log.trace("Cannot init jaxb.", e);
+      return null;
+    }
+  }
 
   <T> T toObject(String content, Class<T> clazz);
 
