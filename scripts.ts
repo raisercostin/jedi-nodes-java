@@ -78,6 +78,12 @@ function runTest(test: string = "LocationsTest"): void {
   shell.exec(`mvn -Dtest=${test} test`);
 }
 
+function releaseAll(argv?: any) {
+    release(argv);
+    releasePerformLocal(argv);
+}
+
+
 const argv = yargs
   .scriptName("scripts")
   .command(
@@ -87,6 +93,7 @@ const argv = yargs
     releasePrepareAndPerform,
   )
   .command("normalizePom", "Normalizes the POM file", {}, normalizePom)
+  .command("release", "Prepares AND release", {}, releaseAll)
   .command("releasePrepare", "Prepares the release", {}, releasePrepare)
   .command(
     "releasePerformLocal",
@@ -102,4 +109,6 @@ const argv = yargs
     releasePerformLocal,
   )
   .demandCommand()
-  .help().argv;
+  .help()
+  .alias('help', 'h')
+  .argv;
