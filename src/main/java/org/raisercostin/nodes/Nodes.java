@@ -1,6 +1,7 @@
 package org.raisercostin.nodes;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import io.vavr.control.Try;
 import org.raisercostin.nodes.impl.CsvNodes;
 import org.raisercostin.nodes.impl.GsonNodes;
 import org.raisercostin.nodes.impl.HoconNodes;
@@ -12,12 +13,16 @@ import org.raisercostin.nodes.impl.XmlJxbThenJacksonNodes;
 import org.raisercostin.nodes.impl.YmlNodes;
 
 public interface Nodes {
+  org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(Nodes.class);
+
   YmlNodes yml = new YmlNodes();
   JsonNodes json = new JsonNodes();
   GsonNodes gson = new GsonNodes();
   XmlJacksonNodes xml = new XmlJacksonNodes();
   XmlJxbNodes xmlJxb = new XmlJxbNodes();
-  XmlJxbThenJacksonNodes xmlJxbThenJackson = new XmlJxbThenJacksonNodes();
+  XmlJxbThenJacksonNodes xmlJxbThenJackson = Try.of(() -> new XmlJxbThenJacksonNodes())
+    .onFailure(e -> log.warn("Cannot init jaxb.", e))
+    .getOrNull();
   CsvNodes csv = new CsvNodes();
   PropNodes prop = new PropNodes();
   HoconNodes hocon = new HoconNodes();
