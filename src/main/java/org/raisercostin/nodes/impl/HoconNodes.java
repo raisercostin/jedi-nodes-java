@@ -123,7 +123,7 @@ public class HoconNodes implements Nodes {
     //      .sortBy(x -> x.getKey())
     //      .map(e -> e.getKey() + "=" + StringUtils.unwrap(e.getValue().render(), "\""))
     //      .mkString("\n");
-    log.info("all:\n{}", allProperties);
+    //log.info("all:\n{}", allProperties);
     return allProperties;
   }
 }
