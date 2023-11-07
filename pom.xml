@@ -72,6 +72,7 @@
     <mainClass>None</mainClass>
     <maven.build.timestamp.format>yyyyMMdd'T'HHmmss</maven.build.timestamp.format>
     <maven.test.skip>false</maven.test.skip>
+    <myJavaVersion>17</myJavaVersion>
     <reactor.version>3.2.5.RELEASE</reactor.version>
     <spring.version>5.2.15.RELEASE</spring.version>
     <springboot.version>2.3.11.RELEASE</springboot.version>
@@ -192,7 +193,7 @@
     <dependency>
       <groupId>org.raisercostin</groupId>
       <artifactId>jedio</artifactId>
-      <version>0.76</version>
+      <version>0.87</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -470,8 +471,8 @@
         </dependencies>
          -->
         <configuration>
-          <source>${source.java.version}</source>
-          <target>${target.java.version}</target>
+          <source>${myJavaVersion}</source>
+          <target>${myJavaVersion}</target>
           <showWarnings>true</showWarnings>
           <showDeprecation>true</showDeprecation>
           <!-- eclipse compiler -->
