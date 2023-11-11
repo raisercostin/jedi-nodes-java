@@ -135,7 +135,6 @@ public interface JacksonNodes extends Nodes {
    * e) { throw org.raisercostin.util.ExceptionUtils.nowrap(e); } }
    */
 
-  @SuppressWarnings("unchecked")
   default Map<String, Object> toMapFromObject(Object payload) {
     return toMapFromString(toString(payload));
   }
@@ -145,12 +144,6 @@ public interface JacksonNodes extends Nodes {
     return toObject(jsonString, Map.class);
   }
 
-  @SuppressWarnings("unchecked")
-  default io.vavr.collection.Map<String, Object> toVavrMapFromString(String jsonString) {
-    return toObject(jsonString, io.vavr.collection.Map.class);
-  }
-
-  @SuppressWarnings("unchecked")
   default <T extends JacksonNodes> T withObjectMapper(Function1<ObjectMapper, ObjectMapper> mapperChanger) {
     final ObjectMapper mapper = mapperChanger.apply(mapper());
     return createJacksonNodes(mapper);
