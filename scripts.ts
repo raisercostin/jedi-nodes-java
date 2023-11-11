@@ -83,20 +83,7 @@ function release(argv?: any) {
   releasePerformLocal(argv);
 }
 
-const argv = yargs
-  .scriptName("scripts")
-  .command(
-    "releasePrepareAndPerform",
-    "Executes releasePrepare and releasePerformLocal",
-    {},
-    releasePrepareAndPerform
-  )
-  .command("normalizePom", "Normalizes the POM file", {}, normalizePom)
-  .command("release", "Prepares AND release", {}, release)
-  .command("releasePrepare", "Prepares the release", {}, releasePrepare)
-  .command(
-    "releasePerformLocal",
-    "Performs the release locally",
+const argsForRelease = 
     {
       repo: {
         type: "string",
@@ -125,10 +112,21 @@ const argv = yargs
         type: "string",
         demandOption: true,
         describe: "Maven released version like 0.72",
-      },
-    },
-    releasePerformLocal
+      }
+    }
+
+const argv = yargs
+  .scriptName("scripts")
+  .command(
+    "releasePrepareAndPerform",
+    "Executes releasePrepare and releasePerformLocal",
+    {},
+    releasePrepareAndPerform
   )
+  .command("normalizePom", "Normalizes the POM file", {}, normalizePom)
+  .command("release", "Prepares AND release", argsForRelease, release)
+  .command("releasePrepare", "Prepares the release", {}, releasePrepare)
+  .command("releasePerformLocal","Performs the release locally",argsForRelease,releasePerformLocal)
   .demandCommand()
   .help()
   .alias("help", "h").argv;
