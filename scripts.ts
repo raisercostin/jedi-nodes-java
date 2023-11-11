@@ -10,9 +10,9 @@ function releasePrepareAndPerform(): void {
   releasePerformLocal();
 }
 
-function releasePrepare(): void {
+function releasePrepare(argv?: any): void {
   shell.exec(
-    'mvn -B release:prepare -DskipTests=true -Prelease -Darguments="-DskipTests=true -Prelease"',
+    'mvn -B release:prepare -DskipTests=true -Prelease -Darguments="-DskipTests=true -Prelease"'
   );
 }
 
@@ -26,7 +26,7 @@ function releasePerformLocal(args?: any): void {
   shell.mkdir("-p", `${repo}/${groupPath}/${artifactId}/${version}`);
   shell.cp(
     `${localMavenRepo}/${groupPath}/${artifactId}/${version}/${artifactId}-${version}*`,
-    `${repo}/${groupPath}/${artifactId}/${version}/`,
+    `${repo}/${groupPath}/${artifactId}/${version}/`
   );
 
   // Call createChecksums for each type
@@ -37,7 +37,7 @@ function releasePerformLocal(args?: any): void {
       repo,
       localMavenRepo,
       groupPath,
-      artifactId,
+      artifactId
     );
   });
 
@@ -45,7 +45,7 @@ function releasePerformLocal(args?: any): void {
   shell.exec(`git -C ${repo} status`);
   shell.exec(`git -C ${repo} add .`);
   shell.exec(
-    `git -C ${repo} commit -m "Release ${artifactId}-${version}" || echo "ignore commit failure, proceed"`,
+    `git -C ${repo} commit -m "Release ${artifactId}-${version}" || echo "ignore commit failure, proceed"`
   );
   shell.exec(`git -C ${repo} push`);
   shell.rm("-f", "pom.xml.releaseBackup", "release.properties");
@@ -65,7 +65,7 @@ function createChecksums(
   repo: string,
   localMavenRepo: string,
   groupPath: string,
-  artifactId: string,
+  artifactId: string
 ): void {
   let file = `${repo}/${groupPath}/${artifactId}/${version}/${artifactId}-${version}${classifier}`;
   shell.rm("-f", `${file}.sha1`);
@@ -78,11 +78,10 @@ function runTest(test: string = "LocationsTest"): void {
   shell.exec(`mvn -Dtest=${test} test`);
 }
 
-function releaseAll(argv?: any) {
-    release(argv);
-    releasePerformLocal(argv);
+function release(argv?: any) {
+  releasePrepare(argv);
+  releasePerformLocal(argv);
 }
-
 
 const argv = yargs
   .scriptName("scripts")
@@ -90,25 +89,46 @@ const argv = yargs
     "releasePrepareAndPerform",
     "Executes releasePrepare and releasePerformLocal",
     {},
-    releasePrepareAndPerform,
+    releasePrepareAndPerform
   )
   .command("normalizePom", "Normalizes the POM file", {}, normalizePom)
-  .command("release", "Prepares AND release", {}, releaseAll)
+  .command("release", "Prepares AND release", {}, release)
   .command("releasePrepare", "Prepares the release", {}, releasePrepare)
   .command(
     "releasePerformLocal",
     "Performs the release locally",
     {
-      repo: { type: "string", demandOption: true, describe: 'Path to git repo with maven libraries like: d:/home/raiser/work/maven-repo' },
+      repo: {
+        type: "string",
+        demandOption: true,
+        describe:
+          "Path to git repo with maven libraries like: d:/home/raiser/work/maven-repo",
+      },
       //Normally this should not be nedeed
-      localMavenRepo: { type: "string", demandOption: true, describe: 'Path to git repo with maven libraries like: c:/Users/raiser/.m2/repository' },
-      groupPath: { type: "string", demandOption: true, describe: 'Maven groupPath like org/raisercostin' },
-      artifactId: { type: "string", demandOption: true, describe: 'Maven artifactId like jedio' },
-      releaseVersion: { type: "string", demandOption: true, describe: 'Maven released version like 0.72' }
+      localMavenRepo: {
+        type: "string",
+        demandOption: true,
+        describe:
+          "Path to git repo with maven libraries like: c:/Users/raiser/.m2/repository",
+      },
+      groupPath: {
+        type: "string",
+        demandOption: true,
+        describe: "Maven groupPath like org/raisercostin",
+      },
+      artifactId: {
+        type: "string",
+        demandOption: true,
+        describe: "Maven artifactId like jedio",
+      },
+      releaseVersion: {
+        type: "string",
+        demandOption: true,
+        describe: "Maven released version like 0.72",
+      },
     },
-    releasePerformLocal,
+    releasePerformLocal
   )
   .demandCommand()
   .help()
-  .alias('help', 'h')
-  .argv;
+  .alias("help", "h").argv;
