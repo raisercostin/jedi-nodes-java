@@ -1,5 +1,5 @@
 import * as shell from "shelljs";
-import yargs from "yargs";
+import yargs, { Options } from "yargs";
 
 const red = "\x1b[31m";
 const green = "\x1b[32m";
@@ -83,37 +83,37 @@ function release(argv?: any) {
   releasePerformLocal(argv);
 }
 
-const argsForRelease = 
-    {
-      repo: {
-        type: "string",
-        demandOption: true,
-        describe:
-          "Path to git repo with maven libraries like: d:/home/raiser/work/maven-repo",
-      },
-      //Normally this should not be nedeed
-      localMavenRepo: {
-        type: "string",
-        demandOption: true,
-        describe:
-          "Path to git repo with maven libraries like: c:/Users/raiser/.m2/repository",
-      },
-      groupPath: {
-        type: "string",
-        demandOption: true,
-        describe: "Maven groupPath like org/raisercostin",
-      },
-      artifactId: {
-        type: "string",
-        demandOption: true,
-        describe: "Maven artifactId like jedio",
-      },
-      releaseVersion: {
-        type: "string",
-        demandOption: true,
-        describe: "Maven released version like 0.72",
-      }
-    }
+const argsForRelease: { [key: string]: Options } =
+{
+  repo: {
+    type: "string",
+    demandOption: true,
+    describe:
+      "Path to git repo with maven libraries like: d:/home/raiser/work/maven-repo",
+  },
+  //Normally this should not be nedeed
+  localMavenRepo: {
+    type: "string",
+    demandOption: true,
+    describe:
+      "Path to git repo with maven libraries like: c:/Users/raiser/.m2/repository",
+  },
+  groupPath: {
+    type: "string",
+    demandOption: true,
+    describe: "Maven groupPath like org/raisercostin",
+  },
+  artifactId: {
+    type: "string",
+    demandOption: true,
+    describe: "Maven artifactId like jedio",
+  },
+  releaseVersion: {
+    type: "string",
+    demandOption: true,
+    describe: "Maven released version like 0.72",
+  }
+}
 
 const argv = yargs
   .scriptName("scripts")
@@ -126,7 +126,7 @@ const argv = yargs
   .command("normalizePom", "Normalizes the POM file", {}, normalizePom)
   .command("release", "Prepares AND release", argsForRelease, release)
   .command("releasePrepare", "Prepares the release", {}, releasePrepare)
-  .command("releasePerformLocal","Performs the release locally",argsForRelease,releasePerformLocal)
+  .command("releasePerformLocal", "Performs the release locally", argsForRelease, releasePerformLocal)
   .demandCommand()
   .help()
   .alias("help", "h").argv;
