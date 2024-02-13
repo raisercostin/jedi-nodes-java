@@ -157,7 +157,7 @@ public class CsvNodes implements JacksonNodes, JacksonNodesLike<CsvNodes, CsvMap
     return ExceptionUtils.tryWithSuppressed(() -> {
       if (value instanceof Iterable) {
         java.util.Iterator<T> iterator = ((Iterable<T>) value).iterator();
-        if (iterator.hasNext()) {
+        if (!iterator.hasNext()) {
           return "";
         }
         T oneValue = iterator.next();
