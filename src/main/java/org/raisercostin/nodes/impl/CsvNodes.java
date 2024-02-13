@@ -156,7 +156,11 @@ public class CsvNodes implements JacksonNodes, JacksonNodesLike<CsvNodes, CsvMap
     mapper.setSerializationInclusion(Include.NON_NULL);
     return ExceptionUtils.tryWithSuppressed(() -> {
       if (value instanceof Iterable) {
-        T oneValue = ((Iterable<T>) value).iterator().next();
+        java.util.Iterator<T> iterator = ((Iterable<T>) value).iterator();
+        if (iterator.hasNext()) {
+          return "";
+        }
+        T oneValue = iterator.next();
         final StringWriter out = new StringWriter();
         objectWriter(oneValue).writeValues(out).writeAll((Iterable<T>) value).flush();
         return out.toString();
