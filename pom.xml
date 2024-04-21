@@ -68,7 +68,7 @@
     <git.userOrGroup>raisercostin</git.userOrGroup>
     <issues.url>${git.url}/issues</issues.url>
     <jackson-bom.version>2.12.3</jackson-bom.version>
-    <lombok.version>1.18.20</lombok.version>
+    <lombok.version>1.18.32</lombok.version>
     <mainClass>None</mainClass>
     <maven.build.timestamp.format>yyyyMMdd'T'HHmmss</maven.build.timestamp.format>
     <maven.test.skip>false</maven.test.skip>
