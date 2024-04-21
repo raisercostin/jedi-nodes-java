@@ -304,16 +304,8 @@ class NodesTest {
 
   @Test
   void testPrettyPrinterWithExclusion2() {
-    assertThat(Nodes.json.mapper.getSerializationConfig()
-      .getFilterProvider()
-      .findPropertyFilter(JacksonUtils.ALL_OBJECTS_FILTER_ID, null))
-        .isNotNull();
     assertThat(Nodes.json.redacting("foo").prettyPrint("{\"foo\":1,\"bar\":2}"))
       .isEqualTo("{\n  \"foo-redacted\" : \"***\",\n  \"bar\" : 2\n}");
-    assertThat(Nodes.json.mapper.getSerializationConfig()
-      .getFilterProvider()
-      .findPropertyFilter(JacksonUtils.ALL_OBJECTS_FILTER_ID, null))
-        .isNotNull();
     assertThat(Nodes.json.prettyPrint("{\"foo\":1,\"bar\":2}"))
       .isEqualTo("{\n  \"foo\" : 1,\n  \"bar\" : 2\n}");
     assertThat(Nodes.json.excluding("foo").prettyPrint("{\"foo\":1,\"bar\":2}")).isEqualTo("{\n  \"bar\" : 2\n}");

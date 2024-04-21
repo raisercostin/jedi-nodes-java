@@ -234,9 +234,6 @@ public class JacksonUtils {
     mapper = (T) mapper.addMixIn(Object.class, FieldExclusionFilterMixIn.class);
     if (excludedFields != null) {
       addFilter(mapper, EXCLUSION_FILTER_ID, _old -> SimpleBeanPropertyFilter.serializeAllExcept(excludedFields));
-      //      mapper.setFilterProvider(
-      //        new SimpleFilterProvider().addFilter("filter properties by name",
-      //          ));
     }
   }
 
