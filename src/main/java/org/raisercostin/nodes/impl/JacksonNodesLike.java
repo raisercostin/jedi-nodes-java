@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy.PropertyNamingStrat
 import io.vavr.Function1;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.raisercostin.nodes.JacksonNodes;
+import org.raisercostin.nodes.impl.JacksonUtils.SimpleFilterProvider2;
 
 public interface JacksonNodesLike<SELF extends JacksonNodes, MAPPER extends ObjectMapper, SCHEMA extends FormatSchema> {
   /** In case jackson is used and more flexibility is needed. */
@@ -23,14 +24,60 @@ public interface JacksonNodesLike<SELF extends JacksonNodes, MAPPER extends Obje
 
   default SELF excluding(String... excludedFields) {
     @SuppressWarnings("unchecked")
-    final MAPPER mapper = (MAPPER) mapper().copy();
+    final MAPPER mapper = cloneMapper();
     JacksonUtils.configureExclusions(mapper, excludedFields);
+    return create(mapper);
+  }
+
+  default MAPPER cloneMapper() {
+    //return (MAPPER) mapper().copy();
+    return cloneMapper(mapper());
+  }
+
+  default MAPPER cloneMapper(MAPPER original) {
+    MAPPER copy = (MAPPER) original.copy();
+    copy.setFilterProvider(((SimpleFilterProvider2) original.getSerializationConfig().getFilterProvider()).copy());
+    //    // Manually copy the filter provider settings
+    //    if (original.getSerializerProvider() != null && original.getSerializerProvider().getConfig() != null
+    //        && original.getSerializerProvider().getConfig().getFilterProvider() != null) {
+    //      copy.setFilterProvider(original.getSerializerProvider().getConfig().getFilterProvider());
+    //    }
+    return copy;
+  }
+
+  /**
+   * Redacting fields with suffix "-redacted" and "***" used as the value.
+   * This ensures that sensitive information is not exposed in our logs or outputs.
+   */
+  default SELF redacting(String... redactingFields) {
+    return redactingFull("%s-redacted", "***", redactingFields);
+  }
+
+  /**
+   * Redacting certain fields for security purposes means both renaming the field by appending a prefix or suffix and
+   * replacing the field's content with a value.
+   * This ensures that sensitive information is not exposed in our logs or outputs.
+   */
+  default SELF redactingFull(String fieldPattern, String value, String... redactingFields) {
+    @SuppressWarnings("unchecked")
+    //    MAPPER oldMapper = mapper();
+    //    String oldValue1 = ((CustomFieldRedactingFilter) (oldMapper.getSerializationConfig()
+    //      .getFilterProvider()
+    //      .findPropertyFilter(JacksonUtils.ALL_OBJECTS_FILTER_ID, null))).fieldsToRedact.toString();
+    //
+    final MAPPER mapper = cloneMapper();
+    JacksonUtils.configureRedacting(fieldPattern, value, mapper, redactingFields);
+    //    String oldValue2 = ((CustomFieldRedactingFilter) (mapper.getSerializationConfig()
+    //      .getFilterProvider()
+    //      .findPropertyFilter(JacksonUtils.ALL_OBJECTS_FILTER_ID, null))).fieldsToRedact.toString();
+    //
+    //    Preconditions.checkArgument(oldValue1.equals(oldValue2), "%s should be %s", oldValue1, oldValue2);
     return create(mapper);
   }
 
   @SuppressWarnings("unchecked")
   default SELF parseWithFailOnUnknwon() {
-    return create((MAPPER) JacksonUtils.configure(mapper().copy(), true));
+    return create(JacksonUtils.configure(cloneMapper(), true));
   }
 
   default SELF withMapper(Function1<MAPPER, ObjectMapper> mapperChanger) {
@@ -40,7 +87,7 @@ public interface JacksonNodesLike<SELF extends JacksonNodes, MAPPER extends Obje
 
   @SuppressWarnings("unchecked")
   default SELF withCopyMapper() {
-    return withMapper(mapper -> (MAPPER) mapper.copy());
+    return withMapper(mapper -> cloneMapper(mapper));
   }
 
   @SuppressWarnings("unchecked")

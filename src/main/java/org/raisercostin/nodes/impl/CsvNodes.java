@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SequenceWriter;
 import com.fasterxml.jackson.databind.SerializationConfig;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.deser.BeanDeserializerModifier;
@@ -26,9 +27,12 @@ import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema.Column;
+import com.google.common.collect.Iterators;
+import com.google.common.collect.PeekingIterator;
 import io.vavr.collection.Iterator;
 import io.vavr.collection.List;
 import io.vavr.collection.Map;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.raisercostin.nodes.JacksonNodes;
 import org.raisercostin.nodes.Nodes;
 
@@ -150,19 +154,29 @@ public class CsvNodes implements JacksonNodes, JacksonNodesLike<CsvNodes, CsvMap
     return mapper;
   }
 
-  @SuppressWarnings("unchecked")
   @Override
   public <T> String toString(T value) {
     mapper.setSerializationInclusion(Include.NON_NULL);
     return ExceptionUtils.tryWithSuppressed(() -> {
       if (value instanceof Iterable) {
+        final StringWriter out = new StringWriter();
         java.util.Iterator<T> iterator = ((Iterable<T>) value).iterator();
         if (!iterator.hasNext()) {
           return "";
         }
+        //PeekingIterator<@Nullable T> piterator = Iterators.peekingIterator(iterator);
         T oneValue = iterator.next();
-        final StringWriter out = new StringWriter();
-        objectWriter(oneValue).writeValues(out).writeAll((Iterable<T>) value).flush();
+        //sometimes this consumes from the value iterable (bug in that iterable) so we just want to keep the value
+        //ObjectWriter objectWriter = objectWriter(oneValue).writeValues(out).writeAll(value).flush();
+        ObjectWriter objectWriter = objectWriter(oneValue);
+        try (SequenceWriter writeValues = objectWriter.writeValues(out)) {
+          SequenceWriter a = writeValues.write(oneValue);
+          while (iterator.hasNext()) {
+            a.write(iterator.next());
+          }
+          a.flush();
+        }
+        //.writeAll((Iterable<T>) value).flush();
         return out.toString();
       } else {
         T oneValue = value;

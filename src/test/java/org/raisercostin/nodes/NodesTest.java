@@ -8,19 +8,18 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.PrettyPrinter;
 import com.fasterxml.jackson.core.util.DefaultIndenter;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.json.JsonMapper;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Value;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.raisercostin.jedio.Locations;
+import org.raisercostin.nodes.impl.JacksonUtils;
+import org.raisercostin.nodes.impl.JacksonUtils.CustomFieldRedactingFilter;
 
 class NodesTest {
   public static class SampleAddress {
@@ -281,5 +280,56 @@ class NodesTest {
   @Test
   void testPrettyPrinterWithExclusion() {
     assertThat(Nodes.json.excluding("foo").prettyPrint("{\"foo\":1,\"bar\":2}")).isEqualTo("{\n  \"bar\" : 2\n}");
+  }
+
+  @Test
+  void testPrettyPrinterWithRedacting() {
+    assertThat(Nodes.json.redacting("foo").prettyPrint("{\"foo\":1,\"bar\":2}"))
+      .isEqualTo("{\n  \"foo-redacted\" : \"***\",\n  \"bar\" : 2\n}");
+  }
+
+  @Test
+  void testImmutability() {
+    assertThat(((CustomFieldRedactingFilter) (Nodes.json.mapper.getSerializationConfig()
+      .getFilterProvider()
+      .findPropertyFilter(JacksonUtils.ALL_OBJECTS_FILTER_ID, null))).fieldsToRedact.toString())
+        .isEqualTo("[]");
+    assertThat(Nodes.json.redacting("foo").prettyPrint("{\"foo\":1,\"bar\":2}"))
+      .isEqualTo("{\n  \"foo-redacted\" : \"***\",\n  \"bar\" : 2\n}");
+    assertThat(((CustomFieldRedactingFilter) (Nodes.json.mapper.getSerializationConfig()
+      .getFilterProvider()
+      .findPropertyFilter(JacksonUtils.ALL_OBJECTS_FILTER_ID, null))).fieldsToRedact.toString())
+        .isEqualTo("[]");
+  }
+
+  @Test
+  void testPrettyPrinterWithExclusion2() {
+    assertThat(Nodes.json.mapper.getSerializationConfig()
+      .getFilterProvider()
+      .findPropertyFilter(JacksonUtils.ALL_OBJECTS_FILTER_ID, null))
+        .isNotNull();
+    assertThat(Nodes.json.redacting("foo").prettyPrint("{\"foo\":1,\"bar\":2}"))
+      .isEqualTo("{\n  \"foo-redacted\" : \"***\",\n  \"bar\" : 2\n}");
+    assertThat(Nodes.json.mapper.getSerializationConfig()
+      .getFilterProvider()
+      .findPropertyFilter(JacksonUtils.ALL_OBJECTS_FILTER_ID, null))
+        .isNotNull();
+    assertThat(Nodes.json.prettyPrint("{\"foo\":1,\"bar\":2}"))
+      .isEqualTo("{\n  \"foo\" : 1,\n  \"bar\" : 2\n}");
+    assertThat(Nodes.json.excluding("foo").prettyPrint("{\"foo\":1,\"bar\":2}")).isEqualTo("{\n  \"bar\" : 2\n}");
+    assertThat(Nodes.json.redacting("foo").prettyPrint("{\"foo\":1,\"bar\":2}"))
+      .isEqualTo("{\n  \"foo-redacted\" : \"***\",\n  \"bar\" : 2\n}");
+  }
+
+  @Test
+  void testPrettyPrinterWithRedactingAndExcluding() {
+    assertThat(Nodes.json.redacting("foo").excluding("bar").prettyPrint("{\"foo\":1,\"bar\":2}"))
+      .isEqualTo("{\n  \"foo-redacted\" : \"***\"\n}");
+  }
+
+  @Test
+  void testPrettyPrinterWithExcludingAndRedacting() {
+    assertThat(Nodes.json.excluding("bar").redacting("foo").prettyPrint("{\"foo\":1,\"bar\":2}"))
+      .isEqualTo("{\n  \"foo-redacted\" : \"***\"\n}");
   }
 }
