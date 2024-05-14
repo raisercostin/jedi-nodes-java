@@ -2,6 +2,7 @@ package org.raisercostin.nodes.impl;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.lang.reflect.Array;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -178,6 +179,8 @@ public class CsvNodes implements JacksonNodes, JacksonNodesLike<CsvNodes, CsvMap
         }
         //.writeAll((Iterable<T>) value).flush();
         return out.toString();
+      } else if (value != null && value.getClass().isArray() && Array.getLength(value) == 0) {
+        return "[]";
       } else {
         T oneValue = value;
         return objectWriter(oneValue).writeValueAsString(value);

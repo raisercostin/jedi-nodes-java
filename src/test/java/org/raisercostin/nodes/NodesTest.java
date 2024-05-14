@@ -103,6 +103,9 @@ class NodesTest {
 
   @Test
   void testCsv() {
+    //bug
+    assertThat(Nodes.csv.toString(new int[0])).isEqualTo("[]");
+    assertThat(Nodes.csv.toString(new Object[0])).isEqualTo("[]");
     testBattery(Nodes.csv.excluding("address"), ".csv", false);
   }
 
