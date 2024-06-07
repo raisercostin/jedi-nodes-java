@@ -2,8 +2,7 @@ package org.raisercostin.nodes.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
+import jakarta.xml.bind.annotation.XmlRootElement;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.junit.jupiter.api.Disabled;

@@ -3,6 +3,7 @@ package org.raisercostin.nodes.impl;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.reflect.Array;
+import java.util.function.Function;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -41,13 +42,27 @@ public class CsvNodes implements JacksonNodes, JacksonNodesLike<CsvNodes, CsvMap
   private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(CsvNodes.class);
 
   private final CsvMapper mapper;
+  private final CsvSchema schema2;
 
   public CsvNodes() {
     this(JacksonUtils.configure(new CsvMapper()));
   }
 
   public CsvNodes(CsvMapper mapper) {
+    this(mapper, defaultSchema(mapper.schema()));
+  }
+
+  private static CsvSchema defaultSchema(CsvSchema schema) {
+    return schema
+      .withHeader()
+      .withComments()
+      .withColumnReordering(true);
+    //.withNullValue("-");
+  }
+
+  public CsvNodes(CsvMapper mapper, CsvSchema schema) {
     this.mapper = mapper;
+    this.schema2 = schema;
     // mapper.configure(Feature.WRAP_AS_ARRAY)
     SimpleModule module = new SimpleModule("CsvAdvanced");
     module.setSerializerModifier(new CsvAdvancedBeanSerializerModifier());
@@ -224,8 +239,7 @@ public class CsvNodes implements JacksonNodes, JacksonNodesLike<CsvNodes, CsvMap
   private CsvSchema csvSchemaFromKeys(List<Object> keySet) {
     CsvSchema.Builder builder = CsvSchema.builder();
     builder.addColumns(keySet.sorted().zipWithIndex().map(c -> new Column(c._2, c._1.toString())));
-    CsvSchema schema = builder.build().withHeader().withComments().withColumnReordering(true);
-    //.withNullValue("-");
+    CsvSchema schema = schema2;
     return schema;
   }
 
@@ -238,9 +252,7 @@ public class CsvNodes implements JacksonNodes, JacksonNodesLike<CsvNodes, CsvMap
   }
 
   private CsvSchema csvSchema(Class<?> clazz) {
-    CsvSchema schema = mapper.schemaFor(clazz).withHeader().withComments().withColumnReordering(true);
-    //.withNullValue("-");
-    return schema;
+    return schema2.withColumnsFrom(mapper.schemaFor(clazz));
   }
 
   @Override
@@ -252,5 +264,10 @@ public class CsvNodes implements JacksonNodes, JacksonNodesLike<CsvNodes, CsvMap
   @Override
   public CsvNodes createJacksonNodes(ObjectMapper mapper) {
     return create((CsvMapper) mapper);
+  }
+
+  public CsvNodes withCsvSchema(Function<CsvSchema, CsvSchema> modifier) {
+    CsvSchema newSchema = modifier.apply(schema2);
+    return newSchema != schema2 ? new CsvNodes(mapper, modifier.apply(schema2)) : this;
   }
 }

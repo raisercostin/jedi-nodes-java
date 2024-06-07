@@ -5,13 +5,12 @@ import java.io.StringWriter;
 import java.time.Duration;
 import java.util.concurrent.ExecutionException;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
-
 import com.google.common.base.Preconditions;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.Marshaller;
 import org.raisercostin.nodes.Nodes;
 
 /**Pure Jxb handler.*/

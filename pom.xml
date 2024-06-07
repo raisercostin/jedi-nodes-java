@@ -67,15 +67,14 @@
     <git.url>https://${git.host}/${git.userOrGroup}/${git.repo}</git.url>
     <git.userOrGroup>raisercostin</git.userOrGroup>
     <issues.url>${git.url}/issues</issues.url>
-    <jackson-bom.version>2.12.3</jackson-bom.version>
+    <jackson-bom.version>2.15.3</jackson-bom.version>
     <lombok.version>1.18.32</lombok.version>
     <mainClass>None</mainClass>
     <maven.build.timestamp.format>yyyyMMdd'T'HHmmss</maven.build.timestamp.format>
     <maven.test.skip>false</maven.test.skip>
     <myJavaVersion>17</myJavaVersion>
-    <reactor.version>3.2.5.RELEASE</reactor.version>
     <spring.version>5.2.15.RELEASE</spring.version>
-    <springboot.version>2.3.11.RELEASE</springboot.version>
+    <springboot.version>3.1.5</springboot.version>
   </properties>
   <dependencyManagement>
     <!-- https://stackoverflow.com/questions/16894032/how-to-use-poms-as-a-dependency-in-maven -->
@@ -97,6 +96,16 @@
     </dependencies>
   </dependencyManagement>
   <dependencies>
+    <dependency>
+      <groupId>jakarta.xml.bind</groupId>
+      <artifactId>jakarta.xml.bind-api</artifactId>
+      <version>3.0.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.jaxb</groupId>
+      <artifactId>jaxb-runtime</artifactId>
+      <version>3.0.1</version>
+    </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
@@ -147,7 +156,11 @@
     <dependency>
       <groupId>com.fasterxml.jackson.module</groupId>
       <artifactId>jackson-module-jsonSchema</artifactId>
-      <version>2.12.5</version>
+      <version>${jackson-bom.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.module</groupId>
+      <artifactId>jackson-module-jaxb-annotations</artifactId>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
