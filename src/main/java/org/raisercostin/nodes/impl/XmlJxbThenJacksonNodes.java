@@ -20,21 +20,24 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import io.vavr.Lazy;
 import io.vavr.jackson.datatype.VavrModule;
 import org.raisercostin.nodes.JacksonNodes;
 
 public class XmlJxbThenJacksonNodes
     implements JacksonNodes, JacksonNodesLike<XmlJxbThenJacksonNodes, XmlMapper, FormatSchema> {
-  private final XmlMapper mapper;
+  private final Lazy<XmlMapper> mapper;
 
   public XmlJxbThenJacksonNodes() {
     //this(JacksonUtils.configure(new XmlMapper(), true));
-    this(configure2(new XmlMapper(), true));
+    this(Lazy.of(() -> configure2(new XmlMapper(), true)));
   }
 
-  public XmlJxbThenJacksonNodes(XmlMapper mapper) {
-    this.mapper = mapper;
-    configureJaxbObjectMapper(mapper);
+  public XmlJxbThenJacksonNodes(Lazy<XmlMapper> mapper) {
+    this.mapper = mapper.map(x -> {
+      configureJaxbObjectMapper(x);
+      return x;
+    });
   }
 
   /** See more configuration in ConfigFeature, JsonGenerator.Feature and FormatFeature. */
@@ -101,30 +104,26 @@ public class XmlJxbThenJacksonNodes
     // mapper.setAnnotationIntrospector(introspector);
 
     // AnnotationIntrospector introspector = new JaxbAnnotationIntrospector();
-    try {
-      final TypeFactory typeFactory = TypeFactory.defaultInstance();
-      final AnnotationIntrospector introspector = new com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector(
-        typeFactory);
-      // if ONLY using JAXB annotations:
-      // mapper.setAnnotationIntrospector(introspector);
-      // if using BOTH JAXB annotations AND Jackson annotations:
-      AnnotationIntrospector secondary = new JacksonAnnotationIntrospector();
-      mapper.setAnnotationIntrospector(AnnotationIntrospector.pair(introspector, secondary));
-    } catch (NoClassDefFoundError e) {
-      log.warn("Cannot configure jaxb.", e);
-    }
+    final TypeFactory typeFactory = TypeFactory.defaultInstance();
+    final AnnotationIntrospector introspector = new com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector(
+      typeFactory);
+    // if ONLY using JAXB annotations:
+    // mapper.setAnnotationIntrospector(introspector);
+    // if using BOTH JAXB annotations AND Jackson annotations:
+    AnnotationIntrospector secondary = new JacksonAnnotationIntrospector();
+    mapper.setAnnotationIntrospector(AnnotationIntrospector.pair(introspector, secondary));
     // mapper.registerModule(new JaxbAnnotationModule());
   }
 
   @SuppressWarnings("unchecked")
   @Override
   public XmlMapper mapper() {
-    return mapper;
+    return mapper.get();
   }
 
   @Override
   public XmlJxbThenJacksonNodes create(XmlMapper configure) {
-    return new XmlJxbThenJacksonNodes(configure);
+    return new XmlJxbThenJacksonNodes(Lazy.of(() -> configure));
   }
 
   @SuppressWarnings("unchecked")

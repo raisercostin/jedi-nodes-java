@@ -3,16 +3,17 @@ package org.raisercostin.nodes.impl;
 import com.fasterxml.jackson.core.FormatSchema;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import io.vavr.Lazy;
 import org.raisercostin.nodes.JacksonNodes;
 
 public class XmlJacksonNodes implements JacksonNodes, JacksonNodesLike<XmlJacksonNodes, XmlMapper, FormatSchema> {
-  private final XmlMapper mapper;
+  private final Lazy<XmlMapper> mapper;
 
   public XmlJacksonNodes() {
-    this(JacksonUtils.configure(new XmlMapper()));
+    this(Lazy.of(() -> JacksonUtils.configure(new XmlMapper())));
   }
 
-  public XmlJacksonNodes(XmlMapper mapper) {
+  public XmlJacksonNodes(Lazy<XmlMapper> mapper) {
     this.mapper = mapper;
   }
   // mapper.configure(JsonGenerator.Feature.IGNORE_UNKNOWN, false);
@@ -34,12 +35,12 @@ public class XmlJacksonNodes implements JacksonNodes, JacksonNodesLike<XmlJackso
   @SuppressWarnings("unchecked")
   @Override
   public XmlMapper mapper() {
-    return mapper;
+    return mapper.get();
   }
 
   @Override
   public XmlJacksonNodes create(XmlMapper configure) {
-    return new XmlJacksonNodes(configure);
+    return new XmlJacksonNodes(Lazy.of(() -> configure));
   }
 
   @SuppressWarnings("unchecked")

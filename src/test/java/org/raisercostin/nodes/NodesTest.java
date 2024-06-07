@@ -91,7 +91,7 @@ class NodesTest {
   @Disabled // jxb needs @XmlRootElement
   void testJxb() {
     SamplePerson a = new SamplePerson();
-    final Nodes nodes = Nodes.jxb;
+    final Nodes nodes = Nodes.xmlJxb;
     System.out.println(nodes.toString(a));
     assertThat(nodes.toString(a))
       .isEqualToNormalizingNewlines("<SamplePerson>\n" + "  <name>Taleb</name>\n" + "  <age>18</age>\n"
@@ -293,13 +293,15 @@ class NodesTest {
 
   @Test
   void testImmutability() {
-    assertThat(((CustomFieldRedactingFilter) (Nodes.json.mapper.getSerializationConfig()
+    assertThat(((CustomFieldRedactingFilter) (Nodes.json.mapper.get()
+      .getSerializationConfig()
       .getFilterProvider()
       .findPropertyFilter(JacksonUtils.ALL_OBJECTS_FILTER_ID, null))).fieldsToRedact.toString())
         .isEqualTo("[]");
     assertThat(Nodes.json.redacting("foo").prettyPrint("{\"foo\":1,\"bar\":2}"))
       .isEqualTo("{\n  \"foo-redacted\" : \"***\",\n  \"bar\" : 2\n}");
-    assertThat(((CustomFieldRedactingFilter) (Nodes.json.mapper.getSerializationConfig()
+    assertThat(((CustomFieldRedactingFilter) (Nodes.json.mapper.get()
+      .getSerializationConfig()
       .getFilterProvider()
       .findPropertyFilter(JacksonUtils.ALL_OBJECTS_FILTER_ID, null))).fieldsToRedact.toString())
         .isEqualTo("[]");

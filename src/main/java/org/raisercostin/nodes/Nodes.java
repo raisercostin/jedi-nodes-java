@@ -1,7 +1,6 @@
 package org.raisercostin.nodes;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import io.vavr.control.Try;
 import org.raisercostin.nodes.impl.CsvNodes;
 import org.raisercostin.nodes.impl.GsonNodes;
 import org.raisercostin.nodes.impl.HoconNodes;
@@ -18,15 +17,14 @@ public interface Nodes {
   YmlNodes yml = new YmlNodes();
   JsonNodes json = new JsonNodes();
   GsonNodes gson = new GsonNodes();
-  XmlJacksonNodes xml = new XmlJacksonNodes();
-  XmlJxbNodes xmlJxb = new XmlJxbNodes();
-  XmlJxbThenJacksonNodes xmlJxbThenJackson = createJaxbOrNull();
   CsvNodes csv = new CsvNodes();
   PropNodes prop = new PropNodes();
   HoconNodes hocon = new HoconNodes();
   HoconNodes hoconWithSystem = new HoconNodes().withUseSystemEnvironment(true).withUseSystemProperties(true);
-  @Deprecated
-  XmlJxbNodes jxb = xmlJxb;
+
+  XmlJacksonNodes xml = new XmlJacksonNodes();
+  XmlJxbNodes xmlJxb = new XmlJxbNodes();
+  XmlJxbThenJacksonNodes xmlJxbThenJackson = createJaxbOrNull();
 
   <T> String toString(T value);
 
@@ -34,8 +32,8 @@ public interface Nodes {
     try {
       return new XmlJxbThenJacksonNodes();
     } catch (NoClassDefFoundError e) {
-      log.warn("Cannot init jaxb: {}. Probably you must include a jaxb library. Enable trace to see exception."
-          + e.getMessage());
+      log.warn("Cannot init jaxb: {}. Probably you must include a jaxb library. Enable trace to see exception.",
+        e.getMessage());
       log.trace("Cannot init jaxb.", e);
       return null;
     }
