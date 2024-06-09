@@ -31,6 +31,7 @@ import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema.Column;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.PeekingIterator;
+import io.vavr.Function1;
 import io.vavr.collection.Iterator;
 import io.vavr.collection.List;
 import io.vavr.collection.Map;
@@ -257,9 +258,19 @@ public class CsvNodes implements JacksonNodes, JacksonNodesLike<CsvNodes, CsvMap
 
   @Override
   public CsvNodes create(CsvMapper mapper) {
-    return new CsvNodes(mapper);
+    throw new RuntimeException("Not implemented yet. Schema should be also copied.");
+    //return new CsvNodes(mapper);
   }
 
+  @Override
+  public CsvNodes withMapper(Function1<CsvMapper, ObjectMapper> mapperChanger) {
+    final ObjectMapper mapper = mapperChanger.apply(mapper());
+    return new CsvNodes((CsvMapper) mapper, schema2);
+  }
+
+  //
+  //  SELF withMapper(Function1<MAPPER, ObjectMapper> mapperChanger) {
+  //  }
   @SuppressWarnings("unchecked")
   @Override
   public CsvNodes createJacksonNodes(ObjectMapper mapper) {
@@ -268,6 +279,6 @@ public class CsvNodes implements JacksonNodes, JacksonNodesLike<CsvNodes, CsvMap
 
   public CsvNodes withCsvSchema(Function<CsvSchema, CsvSchema> modifier) {
     CsvSchema newSchema = modifier.apply(schema2);
-    return newSchema != schema2 ? new CsvNodes(mapper, modifier.apply(schema2)) : this;
+    return newSchema != schema2 ? new CsvNodes(mapper, newSchema) : this;
   }
 }
